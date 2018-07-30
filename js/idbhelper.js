@@ -299,7 +299,7 @@ class IDBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/dist/img/${restaurant.photograph}`);
+    return (`/dist/img/restaurants/${restaurant.photograph}`);
   }
 
   /**

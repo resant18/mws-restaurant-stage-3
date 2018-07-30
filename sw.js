@@ -9,14 +9,14 @@ let staticFilesName = [
   '/dist/img/favicon.png',
   '/dist/img/favicon-196.png',  
   '/dist/img/favicon-512.png',  
-  '/index.html',
-  '/restaurant.html',
-  '/dist/css/styles.css',
-  '/js/lib/idb.js', 
-  '/js/idbhelper.js',
-  '/js/main.js',
-  '/js/restaurant_info.js',
-  '/dist/js/bundle.min.js',
+//   '/index.html',
+//   '/restaurant.html',
+//   '/dist/css/styles.css',
+//   '/js/lib/idb.js', 
+//   '/js/idbhelper.js',
+//   '/js/main.js',
+//   '/js/restaurant_info.js',
+//   '/dist/js/bundle.min.js',
   'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js',
   'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
   'https://unpkg.com/leaflet@1.3.1/dist/images/marker-icon.png',
@@ -54,19 +54,43 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  //console.log(`Fetching ${event.request.url}`);
+self.addEventListener('fetch', (event) => {  
+  var requestUrl = new URL(event.request.url);
+
+  if (requestUrl.origin === location.origin) {
+    if (requestUrl.pathname.startsWith('/dist/img/restaurants/')) {
+      console.log('found it');
+      event.respondWith(serveRestaurantPhoto(event.request));
+      return;
+    }
+  }
   event.respondWith(
-    caches.open(allCaches).then( (cache) => {
-      return cache.match(event.request).then( (response) => {
-        return response || fetch(event.request).then( (response) => {
-          cache.put(event.request, response.clone());
-          return response;
-        });
-      });
+    caches.match(event.request).then( (response) => {
+      return response || fetch(event.request);
     })
   );
 });
+
+function serveRestaurantPhoto(request) {
+  var storageUrl = request.url.replace(/_[a-zA-Z0-9]+\.(jpg|webp)$/, '');
+  return caches.open(contentImgsCache).then(function(cache) {
+    //console.log('begin');
+    //console.log('url=' + storageUrl);    
+    return cache.match(storageUrl).then( (response) => {   
+      //console.log(`response for ${storageUrl}:`);
+      //console.log(response);     
+      var networkFetch = fetch(request).then( (networkResponse) => {
+        //console.log(`network response for ${storageUrl}:`);
+        //console.log(networkResponse);        
+        cache.put(storageUrl, networkResponse.clone());
+        //console.log('put in the cache');        
+        return networkResponse;                
+      });
+      return response || networkFetch;      
+    });
+    //console.log('end');
+  })
+}
 
 // this function will be called by statement worker.postMessage({action: 'skipWaiting'}); from the active page
 self.addEventListener('message', (event) => {
