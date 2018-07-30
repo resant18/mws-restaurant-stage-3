@@ -1,0 +1,29 @@
+{
+  "name": "Restaurant Review",
+  "short_name": "Restaurant Review",
+  "description": "Udacity Grow with Google Mobile Web Specialist Scholarship Project Stage 1",
+  "icons": [
+    {
+      "src": "dist/img/favicon.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "dist/img/favicon-196.png",
+      "type": "image/png",
+      "sizes": "196x196"
+    },
+    {
+      "src": "dist/img/favicon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "background_color": "#eee",
+  "theme_color": "orange",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "dir": "ltr",
+  "lang": "es-US"
+}
