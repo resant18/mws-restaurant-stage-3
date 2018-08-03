@@ -341,8 +341,9 @@ nav h1 a {
   margin-bottom: 5px; }
 
 #reviews-container li p.revdate {
-  font-size: 0.8em;
-  color: #696464; }
+  /* font-size: 0.8em; */
+  color: #656666;
+  }
 
 #reviews-container li p.revrating span.fa {
   padding-right: 3px; }

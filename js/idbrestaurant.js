@@ -56,19 +56,24 @@ class IDBRestaurant {
    * Fetch a restaurant by its ID.
    */
   
-  static fetchRestaurantById(id) {
+  static fetchRestaurantById(saveToDatabase, id) {
     // fetch all restaurants with proper error handling. 
-    console.log('fetching restaurant based on id');
-    return IDBRestaurant.fetchRestaurants()
-      .then( (restaurants) => {    
-        //console.log(restaurants);
-        const restaurant = restaurants.find(r => r.id == id);
-        if (restaurant) { // Got the restaurant
-          return Promise.resolve(restaurant);
-        } else {
-          return Promise.reject(error);
-        }
-      });    
+    let fetchedRestaurant;
+    return fetch(`${SERVER_URL}/restaurants/${id}`)            //fetch from the network    
+      .then( (response) => response.json())                
+      .then( (restaurant) => {                      // save restaurants data to database                               
+        fetchedRestaurant = restaurant;                       
+        if (saveToDatabase) IDBRestaurant.addToDatabase(restaurant);
+        return Promise.resolve();        
+      })      
+      .then(() => {        
+        console.log('return fetchedRestaurants= '+fetchedRestaurant);
+        return fetchedRestaurant;
+      })      
+      .catch(err => {                    
+        const error = (`Fetching restaurant data by id failed. Returned status of ${err}`);                    
+        return Promise.reject(error);
+      });     
   }
 
   /**
@@ -76,20 +81,27 @@ class IDBRestaurant {
    */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood) {
     // Fetch all restaurants
-    return IDBRestaurant.fetchRestaurants( (restaurants) => {   
-      let results = restaurants;
-      if (cuisine != 'all') { // filter by cuisine
-        results = results.filter(r => r.cuisine_type == cuisine);
-      }
-      if (neighborhood != 'all') { // filter by neighborhood
-        results = results.filter(r => r.neighborhood == neighborhood);
-      }
-      return Promise.resolve(results);
-    })
-    .catch(err => {                    
-      const error = (`Fetch restaurants data by cuisine and neighborhood failed. Returned status of ${err}`);                    
-      return Promise.reject(error);
-    }); 
+    return IDBHelper.getData('restaurants')
+      .then ( (restaurantsFromDatabase) => {
+        if (restaurantsFromDatabase.length == 0) return IDBRestaurant.fetchRestaurants(false);
+        didFetchRestaurantsFromDatabase = true;        
+        return Promise.resolve(restaurantsFromDatabase); 
+      })
+      .then( (restaurants) => {
+        let results = restaurants;
+        if (cuisine != 'all') { // filter by cuisine
+          results = results.filter(r => r.cuisine_type == cuisine);
+        }
+        if (neighborhood != 'all') { // filter by neighborhood
+          results = results.filter(r => r.neighborhood == neighborhood);
+        }
+        if (!results) reject('No restaurant data with requested id is found');
+        return Promise.resolve(results);
+      })
+      .catch(err => {                    
+        const error = (`Fetch restaurants data by cuisine and neighborhood failed. Returned status of ${err}`);                    
+        return Promise.reject(error);
+      }); 
   }
 
   /**

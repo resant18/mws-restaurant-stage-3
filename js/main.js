@@ -3,7 +3,7 @@ let restaurants,
   cuisines
 var newMap
 var markers = [];
-let didFetchArticlesFromDatabase = false;
+let didFetchRestaurantsFromDatabase = false;
 
 
 

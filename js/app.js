@@ -1,5 +1,3 @@
-
-
 function registerServiceWorker() {
   // check whether Sevice Worker support exist in browser or not
   if ('serviceWorker' in navigator) {

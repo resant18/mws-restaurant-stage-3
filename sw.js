@@ -58,8 +58,7 @@ self.addEventListener('fetch', (event) => {
   var requestUrl = new URL(event.request.url);
 
   if (requestUrl.origin === location.origin) {
-    if (requestUrl.pathname.startsWith('/dist/img/restaurants/')) {
-      console.log('found it');
+    if (requestUrl.pathname.startsWith('/dist/img/restaurants/')) {      
       event.respondWith(serveRestaurantPhoto(event.request));
       return;
     }

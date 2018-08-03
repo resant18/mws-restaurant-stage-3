@@ -1,12 +1,15 @@
-let restaurant;
+let restaurant, reviews;
 var newMap;
+let didFetchReviewsFromDatabase = false;
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 /**
  * Initialize map as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => { 
-  //console.log('Page is loaded'); 
-  initMap();
+document.addEventListener('DOMContentLoaded', (event) => {   
+  initMap();  
 });
 
 /**
@@ -29,90 +32,70 @@ initMap = () => {
       id: 'mapbox.streets'    
     }).addTo(newMap);
     fillBreadcrumb();
-    IDBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+    IDBRestaurant.mapMarkerForRestaurant(self.restaurant, self.map);
   })
   .catch( (err) => {
     console.log(err);
   }); 
 }
 
-/*
-Old Google Map
-window.initMap = () => {  
-  fetchRestaurantFromURL()
-  .then( (restaurant) => {
-    
-    self.map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 16,
-      center: restaurant.latlng,
-      scrollwheel: false
-    });
-    fillBreadcrumb();
-    console.log(self.restaurant);
-    console.log(self.map);
-    IDBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-  })
-  .catch( (err) => {
-    console.log(err);
-  })  
-}
-*/
-
 /**
  * Get current restaurant from page URL.
  */
 
 fetchRestaurantFromURL = () => {
-  return new Promise( (resolve, reject) => {    
-    if (self.restaurant) { // restaurant already fetched!
-      resolve(self.restaurant);
-    }
-    const id = getParameterByName('id');    
-    if (!id) { // no id found in URL
-      error = 'No restaurant id in URL'
-      reject(error);
-    } else {
-      IDBHelper.fetchRestaurantById(id)
-        .then( (restaurant) => {
-          //console.log(restaurant);
-          self.restaurant = restaurant;
-          if (!restaurant) {
-            console.error(error);
-            reject(error);
-          }
-          fillRestaurantHTML();
-          resolve(restaurant);
-        });
-    }
-  })
-  
+  const id = parseFloat(getParameterByName('id'));
+
+  if ('serviceWorker in navigator') {    
+    console.log('service worker in control');
+    return IDBHelper.getData('restaurants', 'by-id', id)
+      .then( (restaurantFromDatabase) => {              
+        if (restaurantFromDatabase.length == 0) return IDBRestaurant.fetchRestaurantById(true, id)        
+        didFetchReviewsFromDatabase = true;                
+        return Promise.resolve(restaurantFromDatabase);
+      })
+      .then( (restaurant) => {            
+        self.restaurant = restaurant[0];
+        fillRestaurantHTML();
+        return Promise.resolve(self.restaurant);
+      })
+  } else {  
+    console.log('service worker is not in control');  
+    return IDBRestaurant.fetchRestaurantsById(false, id)    
+      .then( (restaurant) => {                
+        fillRestaurantsHTML(restaurant);
+        return Promise.resolve(restaurant);
+      })
+  }  
 }
 
+/**
+ * Get reviews for current restaurant.
+ */
 
-/*
-fetchRestaurantFromURL = (callback) => {
-  if (self.restaurant) { // restaurant already fetched!
-    callback(null, self.restaurant)
-    return;
-  }
-  const id = getParameterByName('id');
-  if (!id) { // no id found in URL
-    error = 'No restaurant id in URL'
-    callback(error, null);
-  } else {
-    IDBHelper.fetchRestaurantById(id, (error, restaurant) => {      
-      self.restaurant = restaurant;
-      console.log('restaurant =' + self.restaurant);
-      if (!restaurant) {
-        console.error(error);
-        return;
-      }
-      fillRestaurantHTML();
-      callback(null, restaurant)
-    });
+fetchReviewsByRestaurant = () => {
+  const id = parseFloat(getParameterByName('id'));
+
+  if ('serviceWorker in navigator') {    
+    IDBHelper.getData('reviews', 'by-restaurantId', id)
+      .then((reviewsFromDatabase) => {        
+        if (reviewsFromDatabase.length == 0) return IDBReview.fetchReviewsByRestaurantId(true)
+        didFetchReviewsFromDatabase = true;        
+        return Promise.resolve(reviewsFromDatabase); 
+      })
+      .then( (reviews) => {        
+        self.reviews = reviews;
+        fillReviewsHTML();
+        Promise.resolve();
+      })
+  } else {    
+    IDBRestaurant.fetchReviewsByRestaurantId(false)
+      .then( (reviews) => {        
+        fillReviewsHTML(reviews);
+        Promise.resolve(); 
+      })
   }
 }
-*/
 
 /**
  * Generate randomly Bacon ipsum (in place of Lorem ipsum) for restaurant description
@@ -154,7 +137,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   const picture = document.getElementById('restaurant-img-responsive');
-  const imageName = IDBHelper.imageUrlForRestaurant(restaurant).replace(/\.[^/.]+$/, '');
+  const imageName = IDBRestaurant.imageUrlForRestaurant(restaurant).replace(/\.[^/.]+$/, '');
   const source1 = document.createElement('source');
   const source2 = document.createElement('source');    
   image.className = 'restaurant-img'
@@ -175,7 +158,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  fetchReviewsByRestaurant();
 }
 
 /**
@@ -201,7 +184,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (reviews = self.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -231,7 +214,9 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');  
-  date.innerHTML = review.date;
+  const utcDate = new Date(review.createdAt);
+  const formattedReviewDate = `${monthNames[utcDate.getMonth()]} ${utcDate.getDay()}, ${utcDate.getFullYear()}`;
+  date.innerHTML = formattedReviewDate;
   date.classList.add('revdate');
   li.appendChild(date);
 

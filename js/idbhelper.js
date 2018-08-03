@@ -1,5 +1,5 @@
 const IDB_NAME = 'mwsrestaurants';
-const IDB_VERSION = 1;
+const IDB_VERSION = 3;
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVzYW50IiwiYSI6ImNqaW5oNXpwMjA5ZnQzd3BiMmtrNWFueHYifQ.SA7IDB7hI_d6bT5RtGeQfg';
 const SERVER_URL = 'http://localhost:1337';
 
@@ -40,9 +40,14 @@ class IDBHelper {
       
       if (!upgradeDb.objectStoreNames.contains('reviews')) {
         var dbReviews = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
-        dbReviews.createIndex('by-id', 'id');              
+        dbReviews.createIndex('by-id', 'id');  
+        dbReviews.createIndex('by-restaurantId', 'restaurant_id');  
       }      
-    });
+    })
+    .catch(err => {                    
+      const error = (`Create database failed. Returned status of ${err}`);                    
+      return Promise.reject(error);
+    }); 
   };
   
   /**
@@ -53,11 +58,15 @@ class IDBHelper {
       const tx = db.transaction(dbStore);
       const store = tx.objectStore(dbStore);
       
-      if ( !check ) { console.log('check=' + check); return store.getAll(); }
+      if ( !check ) return store.getAll();
 
       const index = store.index(dbIndex);
       return index.getAll(check);
-    });
+    })
+    .catch(err => {                    
+      const error = (`Fetch data failed. Returned status of ${err}`);                    
+      return Promise.reject(error);
+    }); 
   };
   
   /**
@@ -70,6 +79,10 @@ class IDBHelper {
       store.put(data);
       return tx.complete;
     })
+    .catch(err => {                    
+      const error = (`Add data to database failed. Returned status of ${err}`);                    
+      return Promise.reject(error);
+    }); 
   };
 
   /**
