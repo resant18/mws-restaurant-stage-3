@@ -1,5 +1,5 @@
 const IDB_NAME = 'mwsrestaurants';
-const IDB_VERSION = 3;
+const IDB_VERSION = 2;
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVzYW50IiwiYSI6ImNqaW5oNXpwMjA5ZnQzd3BiMmtrNWFueHYifQ.SA7IDB7hI_d6bT5RtGeQfg';
 const SERVER_URL = 'http://localhost:1337';
 
@@ -42,7 +42,12 @@ class IDBHelper {
         var dbReviews = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
         dbReviews.createIndex('by-id', 'id');  
         dbReviews.createIndex('by-restaurantId', 'restaurant_id');  
-      }      
+      }   
+      
+      if (!upgradeDb.objectStoreNames.contains('favorites')) {
+        var dbFavorites = upgradeDb.createObjectStore('favorites', {keyPath: 'id'}); 
+        dbFavorites.createIndex('by-id', 'id');                
+      }  
     })
     .catch(err => {                    
       const error = (`Create database failed. Returned status of ${err}`);                    
@@ -70,7 +75,7 @@ class IDBHelper {
   };
   
   /**
-   * Add data to database
+   * Add/update data to database
    */
   static addData(dbStore, data) {
     return IDBHelper.idb.then( (db) => {      
@@ -85,6 +90,28 @@ class IDBHelper {
     }); 
   };
 
+  static removeData(dbStore, dbIndex, searchKey, searchValue) {
+    return IDBHelper.idb.then( (db) => {
+        const tx = db.transaction(dbStore, 'readwrite');
+        const store = tx.objectStore(dbStore);
+
+        if ( !dbIndex ) { return store.openCursor(); }
+        const index = store.index(dbIndex);
+        return index.openCursor();
+    })
+    .then(function deleteItem(cursor) {
+        if (!cursor) return;
+        if ( cursor.value[searchKey] == searchValue ) {
+            cursor.delete();
+        }
+        return cursor.continue().then(deleteItem);
+    })
+    .then( () => { return true; })
+    .catch(err => {                    
+      const error = (`Remove data from database failed. Returned status of ${err}`);                    
+      return false;
+    }); 
+  };
   /**
    * Search data in database
    */

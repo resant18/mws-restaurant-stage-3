@@ -235,7 +235,29 @@ nav {
       min-width: 100%;
       object-fit: cover;    
       border-radius: 12px;
-    }  
+    } 
+    .restaurant-img-container {
+      position: relative;
+    }
+    .favorite-button {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 1.25em;
+      margin: 0;
+      max-width: 25%;
+      position: absolute;
+      right: -10px;
+      top: 5px;      
+      z-index: 2;
+      .icon-heart-favorited {
+        fill: red;
+      }
+      &:not(.icon-heart-favorited) {
+        fill: rgba(255, 255, 255, 0.9);
+      }
+    }     
     h3
     {
       color: $data-link-color-active;

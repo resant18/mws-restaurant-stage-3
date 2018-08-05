@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     console.log('service worker in control');
     IDBHelper.getData('restaurants')
       .then( (restaurantsFromDatabase) => {
-        console.log('total restaurant=' + restaurantsFromDatabase.length);
+        //console.log('total restaurant=' + restaurantsFromDatabase.length);
         if (restaurantsFromDatabase.length == 0) return IDBRestaurant.fetchRestaurants(true)
         didFetchRestaurantsFromDatabase = true;        
         return Promise.resolve(restaurantsFromDatabase); 
@@ -173,7 +173,8 @@ fillRestaurantsHTML = (restaurants) => {
   span.innerHTML = `${restaurants.length} restaurant${(restaurants.length === 0) ? '' : 's'} found`;
   restaurants.forEach(restaurant => {        
     ul.append(createRestaurantHTML(restaurant));
-  });
+  });  
+  addEventToFavoriteButton();
 
   self.restaurants = restaurants;
   addMarkersToMap();
@@ -185,18 +186,14 @@ fillRestaurantsHTML = (restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   // implement responsive image using picture element with breakpoint 789px
-  const pictureContainer = document.createElement('div');  
-  
-  const favoriteToggle = document.createElement('div');
-  favoriteToggle.innerHTML = restaurant.is_favorite ? '&#x2764;': '&#x2764;';
-  pictureContainer.append(favoriteToggle);
-
+  const pictureContainer = document.createElement('div');    
   const picture = document.createElement('picture');
   const image = document.createElement('img');
   const source1 = document.createElement('source');
   const source2 = document.createElement('source');
   const imageName = IDBRestaurant.imageUrlForRestaurant(restaurant).replace(/\.[^/.]+$/, '');
   
+  pictureContainer.className = 'restaurant-img-container';
   image.className = 'restaurant-img';
   image.src = `${imageName}_medium.jpg`;
   image.alt = restaurant.name;
@@ -209,9 +206,48 @@ createRestaurantHTML = (restaurant) => {
   picture.append(source1);
   picture.append(source2);
   picture.append(image);
+  
+  const divFavorite = document.createElement('div');   
+  const button = document.createElement('button');  
+  const is_favorite = String(restaurant.is_favorite) === "true" ? true : false;  
+  const buttonId = `btnFavorite-${restaurant.id}`;
 
+  divFavorite.className = 'restaurant-item-favorite';
+  button.className = 'favorite-button';  
+  button.setAttribute('id', buttonId);
+  button.setAttribute('data-id', restaurant.id);
+  button.setAttribute('aria-label', 'Restaurant favorite toggle button');
+  button.setAttribute('role', 'button');
+  if (is_favorite) {
+    button.setAttribute('aria-pressed', 'true');
+  } else {
+    button.setAttribute('aria-pressed', 'false');
+  }
+   
+  pictureContainer.append(divFavorite);
+  divFavorite.append(button);
+
+  const namespace = 'http://www.w3.org/2000/svg';
+  console.log(is_favorite);
+  console.log(typeof(is_favorite));
+  const is_favorite_class = is_favorite ? 'icon-heart-favorited' : 'icon-heart';
+  let svg = document.createElementNS(namespace, 'svg');
   
+  svg.setAttribute('class', is_favorite_class);
+  svg.setAttribute('id', 'icon-heart');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '72%');
+  svg.setAttribute('height', '72%');
+  //console.log(svg);
+  let path = document.createElementNS(namespace, 'path');
   
+  path.setAttribute('d', 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+  
+
+  pictureContainer.appendChild(button);
+  button.appendChild(svg)  
+  svg.appendChild(path);  
+
   const name = document.createElement('h3');  
   name.innerHTML = restaurant.name;
   li.append(name);
@@ -260,4 +296,71 @@ resetFilter = () => {
   neighborhoods.options.selectedIndex = 0;
   cuisines.options.selectedIndex = 0;
   updateRestaurants();
+}
+
+/* **************************************************************************
+
+    Restaurant Favorite Toggle
+
+ ************************************************************************** */
+addEventToFavoriteButton = () => {
+  var buttons = document.querySelectorAll('button.favorite-button');
+  for (var i = 0; i < buttons.length; i++) {      
+      buttons[i].addEventListener('click', function() {                         
+        toggleFavorite(event.currentTarget);
+      }, false);
+  }
+}
+
+function handleFetchError(response) {
+  if (!response.ok) throw Error(response.statusText);
+  return response;
+}
+
+toggleFavorite = (buttonElement) => {  
+  const restaurant_id = Number(buttonElement.getAttribute('data-id'));
+
+  toggleFavoriteIconClass = () => {    
+    buttonElement.setAttribute('aria-pressed', !(buttonElement.getAttribute('aria-pressed')));
+    return buttonElement.firstChild.classList.toggle('icon-heart-favorited');
+  }
+
+  addRestaurantToFavorite = () => {
+    IDBHelper.getData('restaurants', 'by-id', restaurant_id)    
+      .then((restaurant) => {
+          let updatedRestaurant = restaurant[0];
+          updatedRestaurant.is_favorite = String(!(updatedRestaurant.is_favorite));
+          //update the data after the restaurant.is_favorite is updated
+          IDBHelper.addData('restaurants', updatedRestaurant);
+          IDBHelper.addData('favorites', updatedRestaurant)            
+      })
+  }
+
+  removeRestaurantFromFavorite = () => {
+    IDBHelper.removeData('favorites', false, 'id', restaurant_id)      
+  }
+
+  IDBHelper.getData('favorites', 'by-id', restaurant_id)
+    .then((favoritedRestaurants) => {
+      //console.log( favoritedRestaurants );          
+      if ( favoritedRestaurants.length === 0 ) {
+        addRestaurantToFavorite();  
+      } else {
+        removeRestaurantFromFavorite();
+      }      
+    })
+    .then(() => { return Promise.resolve(toggleFavoriteIconClass())})
+    .then( (updated_is_favorite) => {      
+      let url = `http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=${updated_is_favorite}`;
+      fetch(url, {
+        method: 'PUT'        
+      })
+      .then(handleFetchError)
+      .then( (response) => {
+        removeRestaurantFromFavorite();
+      })
+      .catch( (error) => {
+        console.log('There has been a problem with your fetch operation: ', error.message);
+      });
+    });  
 }

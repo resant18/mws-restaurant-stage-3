@@ -44,7 +44,8 @@ initMap = () => {
  */
 
 fetchRestaurantFromURL = () => {
-  const id = parseFloat(getParameterByName('id'));
+  //const id = parseFloat(getParameterByName('id'));
+  const id = Number(getParameterByName('id'));
 
   if ('serviceWorker in navigator') {    
     console.log('service worker in control');
