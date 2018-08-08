@@ -26,31 +26,29 @@ class IDBHelper {
   static get idb() {
     // If the browser doesn't support service worker or IndexedDB,
     // we don't care about having a database
-    
-    if ((!navigator.serviceWorker) || (!'indexedDB' in window)) {
+     
+    if ((!navigator.serviceWorker)) {    
       console.log('This browser doesn\'t support IndexedDB');
-      return Promise.reject();
+      //return Promise.reject();
     };    
     
     return idb.open(IDB_NAME, IDB_VERSION, (upgradeDb) => {
-      if (!upgradeDb.objectStoreNames.contains('restaurants')) {
-        var dbRestaurants = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
-        dbRestaurants.createIndex('by-id', 'id');      
-      };
-      
-      if (!upgradeDb.objectStoreNames.contains('reviews')) {
-        var dbReviews = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
-        dbReviews.createIndex('by-id', 'id');  
-        dbReviews.createIndex('by-restaurantId', 'restaurant_id');  
-      }   
-      
-      if (!upgradeDb.objectStoreNames.contains('favorites')) {
-        var dbFavorites = upgradeDb.createObjectStore('favorites', {keyPath: 'id'}); 
-        dbFavorites.createIndex('by-id', 'id');                
-      }  
+      console.log('open database');
+      switch(upgradeDb.oldVersion) {
+        case 0:        
+          var dbRestaurants = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
+          dbRestaurants.createIndex('by-id', 'id');              
+        case 1:        
+          var dbReviews = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
+          dbReviews.createIndex('by-id', 'id');  
+          dbReviews.createIndex('by-restaurantId', 'restaurant_id');          
+        case 2:        
+          var dbFavorites = upgradeDb.createObjectStore('favorites', {keyPath: 'id'}); 
+          dbFavorites.createIndex('by-id', 'id');                          
+      }
     })
     .catch(err => {                    
-      const error = (`Create database failed. Returned status of ${err}`);                    
+      const error = (`Open database failed. Returned status of ${err}`);                    
       return Promise.reject(error);
     }); 
   };

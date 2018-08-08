@@ -6,7 +6,6 @@ var markers = [];
 let didFetchRestaurantsFromDatabase = false;
 
 
-
 /**
  * Start ***
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -173,11 +172,12 @@ fillRestaurantsHTML = (restaurants) => {
   span.innerHTML = `${restaurants.length} restaurant${(restaurants.length === 0) ? '' : 's'} found`;
   restaurants.forEach(restaurant => {        
     ul.append(createRestaurantHTML(restaurant));
-  });  
-  addEventToFavoriteButton();
+  });    
 
   self.restaurants = restaurants;
   addMarkersToMap();
+  addEventToFavoriteButton();
+  
 }
 
 /**
@@ -227,9 +227,7 @@ createRestaurantHTML = (restaurant) => {
   pictureContainer.append(divFavorite);
   divFavorite.append(button);
 
-  const namespace = 'http://www.w3.org/2000/svg';
-  console.log(is_favorite);
-  console.log(typeof(is_favorite));
+  const namespace = 'http://www.w3.org/2000/svg';  
   const is_favorite_class = is_favorite ? 'icon-heart-favorited' : 'icon-heart';
   let svg = document.createElementNS(namespace, 'svg');
   
@@ -305,31 +303,71 @@ resetFilter = () => {
  ************************************************************************** */
 addEventToFavoriteButton = () => {
   var buttons = document.querySelectorAll('button.favorite-button');
-  for (var i = 0; i < buttons.length; i++) {      
-      buttons[i].addEventListener('click', function() {                         
-        toggleFavorite(event.currentTarget);
-      }, false);
+  // for (var i = 0; i < buttons.length; i++) {      
+  //     buttons[i].addEventListener('click', () => {                         
+  //       toggleFavorite(event.currentTarget);
+  //     }, false);
+  // }
+
+  if ('serviceWorker' in navigator) {    
+    navigator.serviceWorker.ready
+      .then( (registration) => {
+        for (var i = 0; i < buttons.length; i++) { 
+          buttons[i].addEventListener('click', () => {
+            toggleFavorite(event.currentTarget).then(() => {
+                //return registration.sync.register('sync-favorites');
+                registration.sync.register('sync-favorites').then(() => {
+                  console.log('Favorited Restaurant sync event is registered');
+              });
+            })            
+          });
+        }
+      })
   }
 }
 
-function handleFetchError(response) {
+handleFetchError = (response) => {
   if (!response.ok) throw Error(response.statusText);
   return response;
 }
 
-toggleFavorite = (buttonElement) => {  
+postFavoritedRestaurants = (restaurant_id, is_favorite) => {    
+  let url = `${SERVER_URL}/restaurants/${restaurant_id}/?is_favorite=${is_favorite}`;
+    fetch(url, {
+      method: 'PUT'        
+    })
+    .then(handleFetchError)
+    .then( (response) => {
+      if(response.ok) {
+        console.log('update data in server succeed');
+        IDBHelper.removeData('favorites', false, 'id', restaurant_id);  
+      }
+    })
+    .catch( (error) => {
+      console.log('There has been a problem with your fetch operation: ', error.message);
+    });
+}
+
+
+toggleFavorite = (buttonElement) => {    
   const restaurant_id = Number(buttonElement.getAttribute('data-id'));
 
   toggleFavoriteIconClass = () => {    
+    console.log('toggled...');
     buttonElement.setAttribute('aria-pressed', !(buttonElement.getAttribute('aria-pressed')));
     return buttonElement.firstChild.classList.toggle('icon-heart-favorited');
   }
 
+  
+  
   addRestaurantToFavorite = () => {
+    console.log('add to favorite and update is_favorite');
     IDBHelper.getData('restaurants', 'by-id', restaurant_id)    
       .then((restaurant) => {
           let updatedRestaurant = restaurant[0];
-          updatedRestaurant.is_favorite = String(!(updatedRestaurant.is_favorite));
+          // reverse the value
+          updatedRestaurant.is_favorite = String(updatedRestaurant.is_favorite) === 'true' ? 'false' : 'true';
+          console.log('Is_favorite in main.js: '+ updatedRestaurant.is_favorite);
           //update the data after the restaurant.is_favorite is updated
           IDBHelper.addData('restaurants', updatedRestaurant);
           IDBHelper.addData('favorites', updatedRestaurant)            
@@ -337,10 +375,11 @@ toggleFavorite = (buttonElement) => {
   }
 
   removeRestaurantFromFavorite = () => {
+    console.log('remove from favorite');
     IDBHelper.removeData('favorites', false, 'id', restaurant_id)      
-  }
+  }  
 
-  IDBHelper.getData('favorites', 'by-id', restaurant_id)
+  return IDBHelper.getData('favorites', 'by-id', restaurant_id)
     .then((favoritedRestaurants) => {
       //console.log( favoritedRestaurants );          
       if ( favoritedRestaurants.length === 0 ) {
@@ -350,17 +389,9 @@ toggleFavorite = (buttonElement) => {
       }      
     })
     .then(() => { return Promise.resolve(toggleFavoriteIconClass())})
-    .then( (updated_is_favorite) => {      
-      let url = `http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=${updated_is_favorite}`;
-      fetch(url, {
-        method: 'PUT'        
-      })
-      .then(handleFetchError)
-      .then( (response) => {
-        removeRestaurantFromFavorite();
-      })
-      .catch( (error) => {
-        console.log('There has been a problem with your fetch operation: ', error.message);
-      });
-    });  
+    .then( (updated_is_favorite) => {  
+      postFavoritedRestaurants(restaurant_id, updated_is_favorite);          
+    });
+    
 }
+

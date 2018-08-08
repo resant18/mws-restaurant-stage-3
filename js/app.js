@@ -3,9 +3,9 @@ function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     // to improve boilerplate, delay the service worker registration until after load event fires on window  
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js', {scope: '/'}).then((reg) => {  
+      navigator.serviceWorker.register('/sw.js', {scope: '/'}).then((registration) => {  
         // registration worked      
-        console.log('Service worker registration succeeded. Scope is ' + reg.scope);      
+        console.log('Service worker registration succeeded. Scope is ' + registration.scope);              
 
         // If there’s no controller that means this page didn’t load using service worker, 
         // but load the content from the network taking the latest version. In that case, exit early.
@@ -14,25 +14,25 @@ function registerServiceWorker() {
           return;
         }
         
-        if (reg.waiting) {
-          updateReady(reg.waiting);
+        if (registration.waiting) {
+          updateReady(registration.waiting);
           console.log('Service worker is waiting');
           return;
         }
 
-        if (reg.installing) {
-          trackInstalling(reg.installing);
+        if (registration.installing) {
+          trackInstalling(registration.installing);
           console.log('Service worker is installing');
           return;
         }
     
-        reg.addEventListener('updatefound', function() {
-          trackInstalling(reg.installing);
+        registration.addEventListener('updatefound', () => {
+          trackInstalling(registration.installing);
           console.log('New update is found');
           return;
         });
-        
-      }).catch((error) => {
+      })
+      .catch( (error) => {
         // registration failed    
         console.log('Registration failed with ' + error);   
         return;
@@ -40,12 +40,11 @@ function registerServiceWorker() {
 
       // Ensure refresh is only called once.
       // This works around a bug in "force update on reload".
+      // It is fired whenever the document's controlled by service worker acquires new worker.
       var refreshing;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        //if (refreshing) return;
-        console.log('Reload...');
-        window.location.reload();
-        //refreshing = true;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {        
+        //console.log('Reload...');
+        window.location.reload();        
       });
     });
   } else {

@@ -1,3 +1,4 @@
+
 let staticCacheName = 'mws-static-v1';
 let contentImgsCache = 'mws-content-imgs';
 let allCaches = [
@@ -24,6 +25,10 @@ let staticFilesName = [
   'https://unpkg.com/leaflet@1.3.1/dist/images/marker-shadow.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' 
 ]
+
+//importScripts("js/sync.js");
+//importScripts("js/idbhelper.js");
+
 
 self.addEventListener('install', (event) => {  
   console.log('Install service worker and cache static assets');
@@ -62,12 +67,14 @@ self.addEventListener('fetch', (event) => {
       event.respondWith(serveRestaurantPhoto(event.request));
       return;
     }
+
+    event.respondWith(
+      caches.match(event.request).then( (response) => {
+        return response || fetch(event.request);
+      })
+    );
   }
-  event.respondWith(
-    caches.match(event.request).then( (response) => {
-      return response || fetch(event.request);
-    })
-  );
+  
 });
 
 function serveRestaurantPhoto(request) {
@@ -99,3 +106,18 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+importScripts("js/lib/idb.js");
+importScripts("js/idbhelper.js");
+importScripts("js/sync.js");  
+
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-favorites') {        
+    event.waitUntil(syncFavoritedRestaurants());       
+  };  
+})
+
+
+
+
+             
