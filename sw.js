@@ -113,7 +113,7 @@ importScripts("js/sync.js");
 
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-favorites') {        
-    event.waitUntil(syncFavoritedRestaurants());       
+    syncFavoritedRestaurants();
   };  
 })
 

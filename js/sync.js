@@ -1,4 +1,4 @@
-var store = {
+/*var store = {
   db: null,
  
   init: function() {
@@ -18,6 +18,45 @@ var store = {
   }
 }
 
+
+*/
+
+syncFavoritedRestaurants = () => {
+  console.log('sync process begins');
+  IDBHelper.getData('favorites', 'by-id')    
+    .then((favoritedRestaurant) => {     
+      console.log("favorites restaurant is " + favoritedRestaurant.length) 
+      favoritedRestaurant.forEach( (restaurant) => {
+        postFavoritedRestaurants(restaurant.id, restaurant.is_favorite);
+      })
+    })
+}
+
+postFavoritedRestaurants = (restaurant_id, is_favorite) => {    
+  let url = `${SERVER_URL}/restaurants/${restaurant_id}/?is_favorite=${is_favorite}`;
+    fetch(url, {
+      method: 'PUT'        
+    })    
+    .then( (response) => {
+      if(response.ok) {
+        console.log('update data in server succeed');
+        IDBHelper.removeData('favorites', false, 'id', restaurant_id);  
+      }
+    })
+    .catch( (error) => {
+      console.log('There has been a problem with your fetch operation: ', error.message);
+    });
+}
+
+
+
+
+
+
+
+
+
+/*
 syncFavoritedRestaurants = () => { 
   console.log('syncFavoritedRestaurants');
   store.favorites('readonly') 
@@ -47,3 +86,4 @@ syncFavoritedRestaurants = () => {
         console.log('There has been a problem with fetch operation: ', err.message);
     })
   }
+  */

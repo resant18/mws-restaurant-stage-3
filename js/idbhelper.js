@@ -24,14 +24,6 @@ class IDBHelper {
    * Create IndexDB database in client browser. Return Promise
    */
   static get idb() {
-    // If the browser doesn't support service worker or IndexedDB,
-    // we don't care about having a database
-     
-    if ((!navigator.serviceWorker)) {    
-      console.log('This browser doesn\'t support IndexedDB');
-      //return Promise.reject();
-    };    
-    
     return idb.open(IDB_NAME, IDB_VERSION, (upgradeDb) => {
       console.log('open database');
       switch(upgradeDb.oldVersion) {

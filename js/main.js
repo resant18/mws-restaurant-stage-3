@@ -309,23 +309,14 @@ addEventToFavoriteButton = () => {
   //     }, false);
   // }
 
-  if ('serviceWorker' in navigator) {    
-    navigator.serviceWorker.ready
-      .then( (registration) => {
-        for (var i = 0; i < buttons.length; i++) { 
-          buttons[i].addEventListener('click', () => {
-            toggleFavorite(event.currentTarget).then(() => {
-                //return registration.sync.register('sync-favorites');
-                registration.sync.register('sync-favorites').then(() => {
-                  console.log('Favorited Restaurant sync event is registered');
-              });
-            })            
-          });
-        }
-      })
+  for (var i = 0; i < buttons.length; i++) { 
+    buttons[i].addEventListener('click', () => {
+      toggleFavorite(event.currentTarget);            
+    });
   }
 }
 
+/*
 handleFetchError = (response) => {
   if (!response.ok) throw Error(response.statusText);
   return response;
@@ -347,19 +338,50 @@ postFavoritedRestaurants = (restaurant_id, is_favorite) => {
       console.log('There has been a problem with your fetch operation: ', error.message);
     });
 }
-
+*/
 
 toggleFavorite = (buttonElement) => {    
-  const restaurant_id = Number(buttonElement.getAttribute('data-id'));
+  const restaurant_id = Number(buttonElement.getAttribute('data-id'));  
+  const button_state = buttonElement.firstChild.classList.toggle('icon-heart-favorited'); //switch the button state
 
-  toggleFavoriteIconClass = () => {    
-    console.log('toggled...');
-    buttonElement.setAttribute('aria-pressed', !(buttonElement.getAttribute('aria-pressed')));
-    return buttonElement.firstChild.classList.toggle('icon-heart-favorited');
-  }
+  buttonElement.setAttribute('aria-pressed', !(buttonElement.getAttribute('aria-pressed')));          
 
-  
-  
+  IDBHelper.getData('restaurants', 'by-id', restaurant_id)
+  .then((selectedRestaurant) => {
+    if (selectedRestaurant.length === 0) return;
+    IDBHelper.getData('favorites', 'by-id', restaurant_id)
+    .then((favoritedRestaurant) => {
+      let updatedRestaurant = selectedRestaurant[0];
+      let localUpdateTasks = [];
+      updatedRestaurant.is_favorite = button_state;
+      if ( favoritedRestaurant.length === 0 ) {            
+        //TODO: change to promise.all    
+        localUpdate = [
+          IDBHelper.addData('favorites', updatedRestaurant),
+          IDBHelper.addData('restaurants', updatedRestaurant)
+        ];        
+      } else {     
+        localUpdate = [       
+          IDBHelper.removeData('favorites', false, 'id', restaurant_id),     
+          IDBHelper.addData('restaurants', updatedRestaurant)
+        ];
+      }
+      Promise.all(localUpdateTasks)
+      .then( (x) => {
+        if ('serviceWorker' in navigator) {    
+          navigator.serviceWorker.ready
+          .then( (registration) => {
+            //return registration.sync.register('sync-favorites');
+              registration.sync.register('sync-favorites').then(() => {
+                console.log('Register sync');
+            });
+          })
+        }
+      }) 
+    });
+  });      
+    
+  /*  
   addRestaurantToFavorite = () => {
     console.log('add to favorite and update is_favorite');
     IDBHelper.getData('restaurants', 'by-id', restaurant_id)    
@@ -367,31 +389,59 @@ toggleFavorite = (buttonElement) => {
           let updatedRestaurant = restaurant[0];
           // reverse the value
           updatedRestaurant.is_favorite = String(updatedRestaurant.is_favorite) === 'true' ? 'false' : 'true';
-          console.log('Is_favorite in main.js: '+ updatedRestaurant.is_favorite);
+          //console.log('Is_favorite in main.js: '+ updatedRestaurant.is_favorite);
           //update the data after the restaurant.is_favorite is updated
           IDBHelper.addData('restaurants', updatedRestaurant);
           IDBHelper.addData('favorites', updatedRestaurant)            
+          console.log("save is complete");
+          
+          if ('serviceWorker' in navigator) {    
+            navigator.serviceWorker.ready
+              .then( (registration) => {
+                //return registration.sync.register('sync-favorites');
+                  registration.sync.register('sync-favorites').then(() => {
+                    console.log('Register sync');
+                });
+
+              })
+          }
+          
       })
   }
 
   removeRestaurantFromFavorite = () => {
-    console.log('remove from favorite');
+    console.log('remove from favorite');    
     IDBHelper.removeData('favorites', false, 'id', restaurant_id)      
   }  
 
-  return IDBHelper.getData('favorites', 'by-id', restaurant_id)
-    .then((favoritedRestaurants) => {
+  updateFavoriteIcon();
+  return IDBHelper.getData('restaurants', 'by-id', restaurant_id)
+    .then((selectedRestaurant) => {
+      if (selectedRestaurant.length === 0) return;
+      return IDBHelper.getData('favorites', 'by-id', restaurant_id)
+        .then((favoritedRestaurant) => {
+          if ( favoritedRestaurant.length === 0 ) {            
+            //TODO: change to promise.all
+            const updatedRestaurant.is_favorite = !()
+            IDBHelper.addData('favorites', selectedRestaurant)   
+            IDBHelper.addData('restaurants', selectedRestaurant);
+          } else {
+            removeRestaurantFromFavorite();
+          }
+        
+
       //console.log( favoritedRestaurants );          
       if ( favoritedRestaurants.length === 0 ) {
         addRestaurantToFavorite();  
       } else {
         removeRestaurantFromFavorite();
-      }      
+      } 
     })
+  })
     .then(() => { return Promise.resolve(toggleFavoriteIconClass())})
     .then( (updated_is_favorite) => {  
       postFavoritedRestaurants(restaurant_id, updated_is_favorite);          
     });
-    
+    */
 }
 
