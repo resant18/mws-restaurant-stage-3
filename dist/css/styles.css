@@ -167,22 +167,11 @@ nav h1 a {
   margin: 3px 10px 0 0;
   padding: 0 10px; }
 
-.filter-options #reset-filter {
-  border-radius: 6px;
-  background-color: #f18200;
-  border: none;
-  color: #ffffff;
-  text-align: center;
-  font-size: inherit;
-  padding: 9px;
-  -webkit-transition: all 0.5s;
-  transition: all 0.5s;
-  cursor: pointer;
-  margin-left: 5px;
-  width: 80px; }
-
 .filter-options #total-restaurant-list {
   padding-left: 10px; }
+
+#reset-filter {
+  width: 80px; }
 
 #restaurants-list {
   list-style: outside none none;
@@ -221,13 +210,10 @@ nav h1 a {
   position: absolute;
   right: -10px;
   top: 5px;
-  z-index: 2;
-  }
+  z-index: 2; }
 
 #restaurants-list li .favorite-button .icon-heart-favorited {
-  fill: red;
-  border: white;
-  }
+  fill: red; }
 
 #restaurants-list li .favorite-button:not(.icon-heart-favorited) {
   fill: rgba(255, 255, 255, 0.9); }
@@ -330,6 +316,14 @@ nav h1 a {
   padding: 15px;
   grid-area: reviews-container; }
 
+#reviews-container #reviews-header {
+  position: relative; }
+
+#reviews-container #add-review {
+  position: absolute;
+  top: 0;
+  right: 0; }
+
 #reviews-container #reviews-list {
   margin: 0;
   padding: 0; }
@@ -356,13 +350,53 @@ nav h1 a {
 #reviews-container li p.revdate {
   color: #656666; }
 
-#reviews-container li p.revrating span.fa {
+.revrating span.fa {
   padding-right: 3px; }
 
-#reviews-container li p.revrating span.checked {
+.revrating span.checked {
   color: #f18200; }
 
-#reset-filter:hover, #reset-filter:focus, #restaurants-list li a:hover, #restaurants-list li a:focus {
+#add-review-dialog.review input[type=text], #add-review-dialog select, #add-review-dialog textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  margin-bottom: 16px; }
+
+#add-review-dialog.button {
+  width: 160px; }
+
+#add-review-dialog #label_review_username {
+  display: block; }
+
+#add-review-dialog .revrating {
+  display: inline-block;
+  -webkit-margin-after: 1em;
+  margin-block-end: 1em; }
+
+#add-review-dialog .revrating > span {
+  display: inline-block;
+  width: 1.1em; }
+
+#add-review-dialog .revrating > span:hover ~ span {
+  color: #333; }
+
+#add-review-dialog .revrating:hover span, #add-review-dialog .revrating > span:hover {
+  color: #f18200; }
+
+.button {
+  border-radius: 6px;
+  background-color: #f18200;
+  border: none;
+  color: black;
+  text-align: center;
+  font-size: inherit;
+  padding: 9px;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin-left: 5px; }
+
+.button:hover, .button:focus, #restaurants-list li a:hover, #restaurants-list li a:focus {
   background-color: #f4511e; }
 
 .hidden {
@@ -374,6 +408,29 @@ nav h1 a {
 #restaurants-list li, .shadow {
   -webkit-box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.36);
   box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.36); }
+
+.dialog {
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  padding: 20px; }
+
+input[type=text], select, textarea {
+  background-color: white;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 11pt;
+  resize: vertical; }
+
+.review input[type=submit] {
+  background-color: orange;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer; }
 
 @media (max-width: 768px) {
   body {

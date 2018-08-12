@@ -196,23 +196,13 @@ nav {
     letter-spacing: 0;
     margin: 3px 10px 0 0;
     padding: 0 10px;  
-  }
-  #reset-filter {  
-    border-radius: 6px;
-    background-color: $data-link-color-active;
-    border: none;
-    color: #ffffff;
-    text-align: center;
-    font-size: inherit;
-    padding: 9px;
-    transition: all 0.5s;
-    cursor: pointer;
-    margin-left: 5px;
-    width: 80px;
-  }
+  }  
   #total-restaurant-list {
     padding-left: 10px;
   }
+}
+#reset-filter {
+  width: 80px;
 }
 
 /* ====================== Restaurant Listing ====================== */
@@ -360,6 +350,14 @@ nav {
   margin: 13px 0;
   padding: 15px;
   grid-area: reviews-container;
+  #reviews-header {
+    position: relative;
+  }
+  #add-review {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   #reviews-list {
     margin: 0;
     padding: 0;
@@ -383,22 +381,70 @@ nav {
       }
       &.revdate {        
         color: #656666;  
-      }      
-      &.revrating span.fa {
-        padding-right: 3px;        
-      }
-      &.revrating span.checked {
-        color: $data-link-color-active;
-      }      
+      }                
     }
   }
+}
+.revrating span.fa {
+  padding-right: 3px;        
+}
+.revrating span.checked {
+  color: $data-link-color-active;
+}  
+#add-review-dialog {
+  &.review input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;      
+    margin-top: 6px;
+    margin-bottom: 16px;    
+  }
+  &.button {
+    width: 160px;
+  }
+  #label_review_username {
+    display: block;
+  }
+  .revrating {
+    display: inline-block;
+    margin-block-end: 1em;    
+        
+  } 
+  .revrating > span {
+    display: inline-block;    
+    width: 1.1em;
+  }
+  .revrating > span:hover ~ span { 
+    color: #333;
+  }
+  .revrating:hover span,
+  .revrating > span:hover {        
+     color: #f18200;     
+  }
+  // .revrating > span:hover:before,
+  // .revrating > span:hover ~ span:before {
+  //    content: "\f005";
+  //    color: #f18200;     
+  // }
 }
 
 /* =======================================================================================
 ==================================== General Styling =====================================
 ======================================================================================= */
-#reset-filter:hover,
-#reset-filter:focus,
+.button {  
+  border-radius: 6px;
+  background-color: $data-link-color-active;
+  border: none;
+  color: black;
+  text-align: center;
+  font-size: inherit;
+  padding: 9px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin-left: 5px;  
+}
+
+.button:hover,
+.button:focus,
 #restaurants-list li a:hover,
 #restaurants-list li a:focus {
   background-color: #f4511e;  
@@ -413,5 +459,26 @@ nav {
 .shadow {
   box-shadow: 0px 3px 4px 0px rgba(0,0,0,0.36);
 }
-
+.dialog {
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  padding: 20px;
+}
+input[type=text], select, textarea {
+  background-color: white;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 11pt;
+  resize: vertical;
+}
+.review input[type=submit] {
+  background-color: orange;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 @import 'responsive';

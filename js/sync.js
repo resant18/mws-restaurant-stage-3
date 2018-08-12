@@ -48,6 +48,28 @@ postFavoritedRestaurants = (restaurant_id, is_favorite) => {
     });
 }
 
+syncRestaurantReview = () => {
+  console.log('sync review process begin');
+  return IDBHelper.getData('reviews','by-status','pending')
+  .then ( (pendingReviews) => {
+    return Promise.all(pendingReviews.map( (pendingReview) => {
+      let url = `${SERVER_URL}/reviews/`;
+      return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(pendingReview)
+      })
+      .then( (response) => {
+        return response.json();
+      })
+      // .then ( (data) => {
+      //   if (data.result === 'success') {
+      //     return IDBHelper.removeData('tempreviews', false, 'id', review.id);
+      //   }
+      // });
+    }));
+  });  
+}
+
 
 
 

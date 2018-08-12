@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         fillRestaurantsHTML(restaurants);
         return Promise.resolve();
       })
+    
+    // TODO: Fallback for sync Favorites
+
   }  
 })
 
@@ -303,11 +306,6 @@ resetFilter = () => {
  ************************************************************************** */
 addEventToFavoriteButton = () => {
   var buttons = document.querySelectorAll('button.favorite-button');
-  // for (var i = 0; i < buttons.length; i++) {      
-  //     buttons[i].addEventListener('click', () => {                         
-  //       toggleFavorite(event.currentTarget);
-  //     }, false);
-  // }
 
   for (var i = 0; i < buttons.length; i++) { 
     buttons[i].addEventListener('click', () => {
@@ -368,7 +366,7 @@ toggleFavorite = (buttonElement) => {
       }
       Promise.all(localUpdateTasks)
       .then( (x) => {
-        if ('serviceWorker' in navigator) {    
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {    
           navigator.serviceWorker.ready
           .then( (registration) => {
             //return registration.sync.register('sync-favorites');
@@ -379,69 +377,6 @@ toggleFavorite = (buttonElement) => {
         }
       }) 
     });
-  });      
-    
-  /*  
-  addRestaurantToFavorite = () => {
-    console.log('add to favorite and update is_favorite');
-    IDBHelper.getData('restaurants', 'by-id', restaurant_id)    
-      .then((restaurant) => {
-          let updatedRestaurant = restaurant[0];
-          // reverse the value
-          updatedRestaurant.is_favorite = String(updatedRestaurant.is_favorite) === 'true' ? 'false' : 'true';
-          //console.log('Is_favorite in main.js: '+ updatedRestaurant.is_favorite);
-          //update the data after the restaurant.is_favorite is updated
-          IDBHelper.addData('restaurants', updatedRestaurant);
-          IDBHelper.addData('favorites', updatedRestaurant)            
-          console.log("save is complete");
-          
-          if ('serviceWorker' in navigator) {    
-            navigator.serviceWorker.ready
-              .then( (registration) => {
-                //return registration.sync.register('sync-favorites');
-                  registration.sync.register('sync-favorites').then(() => {
-                    console.log('Register sync');
-                });
-
-              })
-          }
-          
-      })
-  }
-
-  removeRestaurantFromFavorite = () => {
-    console.log('remove from favorite');    
-    IDBHelper.removeData('favorites', false, 'id', restaurant_id)      
-  }  
-
-  updateFavoriteIcon();
-  return IDBHelper.getData('restaurants', 'by-id', restaurant_id)
-    .then((selectedRestaurant) => {
-      if (selectedRestaurant.length === 0) return;
-      return IDBHelper.getData('favorites', 'by-id', restaurant_id)
-        .then((favoritedRestaurant) => {
-          if ( favoritedRestaurant.length === 0 ) {            
-            //TODO: change to promise.all
-            const updatedRestaurant.is_favorite = !()
-            IDBHelper.addData('favorites', selectedRestaurant)   
-            IDBHelper.addData('restaurants', selectedRestaurant);
-          } else {
-            removeRestaurantFromFavorite();
-          }
-        
-
-      //console.log( favoritedRestaurants );          
-      if ( favoritedRestaurants.length === 0 ) {
-        addRestaurantToFavorite();  
-      } else {
-        removeRestaurantFromFavorite();
-      } 
-    })
-  })
-    .then(() => { return Promise.resolve(toggleFavoriteIconClass())})
-    .then( (updated_is_favorite) => {  
-      postFavoritedRestaurants(restaurant_id, updated_is_favorite);          
-    });
-    */
+  });         
 }
 

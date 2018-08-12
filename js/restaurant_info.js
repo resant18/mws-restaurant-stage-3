@@ -1,4 +1,5 @@
-let restaurant, reviews;
+var restaurant, reviews;
+var restaurant_id; 
 var newMap;
 let didFetchReviewsFromDatabase = false;
 const monthNames = [
@@ -45,24 +46,33 @@ initMap = () => {
 
 fetchRestaurantFromURL = () => {
   //const id = parseFloat(getParameterByName('id'));
-  const id = Number(getParameterByName('id'));
+  restaurant_id = Number(getParameterByName('id'));
 
   if ('serviceWorker in navigator') {    
     console.log('service worker in control');
-    return IDBHelper.getData('restaurants', 'by-id', id)
+    return IDBHelper.getData('restaurants', 'by-id', restaurant_id)
       .then( (restaurantFromDatabase) => {              
-        if (restaurantFromDatabase.length == 0) return IDBRestaurant.fetchRestaurantById(true, id)        
-        didFetchReviewsFromDatabase = true;                
-        return Promise.resolve(restaurantFromDatabase);
+        if (restaurantFromDatabase.length == 0) {
+          return IDBRestaurant.fetchRestaurants(true)
+            .then( (fetchedRestaurants) => {
+              if (fetchedRestaurants.length != 0) { //return IDBHelper.getData('restaurants', 'by-id', restaurant_id);            
+                for (let fetchedRestaurant of fetchedRestaurants) {
+                  console.log(fetchedRestaurant.id);
+                  if (fetchedRestaurant.id == restaurant_id) return Promise.resolve(fetchedRestaurant);
+                }
+              }
+            })        
+        }
+        return Promise.resolve(restaurantFromDatabase[0]);        
       })
       .then( (restaurant) => {            
-        self.restaurant = restaurant[0];
+        self.restaurant = restaurant;
         fillRestaurantHTML();
         return Promise.resolve(self.restaurant);
       })
   } else {  
     console.log('service worker is not in control');  
-    return IDBRestaurant.fetchRestaurantsById(false, id)    
+    return IDBRestaurant.fetchRestaurantsById(false, restaurant_id)    
       .then( (restaurant) => {                
         fillRestaurantsHTML(restaurant);
         return Promise.resolve(restaurant);
@@ -75,12 +85,10 @@ fetchRestaurantFromURL = () => {
  */
 
 fetchReviewsByRestaurant = () => {
-  const id = parseFloat(getParameterByName('id'));
-
   if ('serviceWorker in navigator') {    
-    IDBHelper.getData('reviews', 'by-restaurantId', id)
+    IDBHelper.getData('reviews', 'by-restaurantId', restaurant_id)    
       .then((reviewsFromDatabase) => {        
-        if (reviewsFromDatabase.length == 0) return IDBReview.fetchReviewsByRestaurantId(true)
+        if (reviewsFromDatabase.length == 0) return IDBReview.fetchReviewsByRestaurantId(true, restaurant_id)
         didFetchReviewsFromDatabase = true;        
         return Promise.resolve(reviewsFromDatabase); 
       })
@@ -90,7 +98,7 @@ fetchReviewsByRestaurant = () => {
         Promise.resolve();
       })
   } else {    
-    IDBRestaurant.fetchReviewsByRestaurantId(false)
+    IDBRestaurant.fetchReviewsByRestaurantId(false, restaurant_id)
       .then( (reviews) => {        
         fillReviewsHTML(reviews);
         Promise.resolve(); 
@@ -160,6 +168,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
   // fill reviews
   fetchReviewsByRestaurant();
+
+  // add review form
+  createAddReviewForm();
 }
 
 /**
@@ -187,9 +198,15 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.reviews) => {
   const container = document.getElementById('reviews-container');
+  const container_header = document.getElementById('reviews-header');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
-  container.appendChild(title);
+  container_header.appendChild(title);
+
+  const review_button = document.createElement('button');
+  review_button.id = 'add-review';
+  review_button.innerHTML = "+";
+  container_header.appendChild(review_button);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -239,13 +256,21 @@ createRatingStar = (rating) => {
   const rating_max = 5;
   let rating_html = '';
   let i = 1;
-  while (i <= rating_max) {
-    if ((i <= rating) && (i <= rating_max)) {
-      rating_html += `<span class='fa fa-star checked'></span>`;
-    } else {
-      rating_html += `<span class='fa fa-star'></span>`;
+  if (rating != 0) {
+    while (i <= rating_max) {
+      if ((i <= rating) && (i <= rating_max)) {
+        rating_html += `<span class='fa fa-star checked'></span>`;
+      } else {
+        rating_html += `<span class='fa fa-star'></span>`;
+      }
+      i++;
     }
-    i++;
+  }
+  else {
+    while (i <= rating_max) {
+      rating_html += `<span class='fa fa-star' id='${i}' data-rating='${i}'></span>`;      
+      i++;
+    }
   }  
   return rating_html;
 }
@@ -275,4 +300,133 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+/**
+ * Create add reviews HTML and add them to the webpage.
+ */
+createAddReviewForm = () => {
+  const container = document.getElementById('add-review-dialog');
+  
+  const title = document.createElement('h2');
+  title.innerHTML = 'Write a Review';
+  container.appendChild(title);
+  
+  const info = document.createElement('p');
+  info.id = 'dialog-review-info';
+  info.innerHTML = 'Add and share your review of this restaurant';
+  container.appendChild(info);
+
+  const content = document.createElement('div');
+  content.className = 'add-review-content';
+  container.appendChild(content);
+
+  const form = document.createElement('form');
+  form.id = 'review-form';
+  content.appendChild(form);
+
+  const labelRating = document.createElement('label');      
+  const rating = document.createElement('div'); 
+  rating.id = 'rating';  
+  rating.className = 'revrating';  
+  rating.innerHTML = createRatingStar(0);  
+  labelRating.setAttribute('for', 'review_rating');
+  labelRating.innerHTML = 'Select your rating: ';
+  form.appendChild(labelRating);
+  form.appendChild(rating);
+
+  const labelName = document.createElement('label');
+  const inputName = document.createElement('input');   
+  labelName.setAttribute('for', 'review_username');
+  labelName.id = 'label_review_username';
+  labelName.innerHTML = 'Name';  
+  inputName.id = 'review_username';
+  inputName.name = 'review_username';
+  inputName.type = 'text';
+  inputName.placeholder = 'Your name...';
+  inputName.setAttribute('type', 'text');
+  form.appendChild(labelName);
+  form.appendChild(inputName);
+  
+  const labelReview = document.createElement('label');
+  const inputReview = document.createElement('textarea');  
+  labelReview.setAttribute('for', 'review_comment');
+  labelReview.innerHTML = 'Your review';
+  inputReview.id = 'review_comment';
+  inputReview.name = 'review_comment';
+  inputReview.placeholder = 'Write your review here...';
+  inputReview.rows = '5';
+  form.appendChild(labelReview);
+  form.appendChild(inputReview);
+  
+  const buttonSubmit = document.createElement('button');
+  buttonSubmit.id = 'submit_review';
+  buttonSubmit.type = 'submit';
+  buttonSubmit.value = 'submit';
+  buttonSubmit.className = 'button submit';
+  buttonSubmit.innerHTML = 'Submit Review';
+  form.appendChild(buttonSubmit);  
+
+  //var x = document.getElementById('rating').children;
+  //console.log(x[1].className);
+
+  
+  rating.addEventListener('click', (event) => {  
+    let action = 'add';  
+    for(let span of rating.children) {      
+      if (action === 'add') span.classList[action]('checked');      
+      if (span === event.target) action = 'remove';
+    }
+  })
+
+  /**
+   * Post review of a restaurant.
+   */
+  
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    // TODO: Update the rating with the real data
+    var rating = Math.floor(Math.random() * 6);   
+    var username = this['review_username'].value;
+    var comment = this['review_comment'].value;    
+
+    if ( !restaurant_id | !rating | !username | !comment ) {
+          return;
+    }
+    
+    saveReviewsLocally(restaurant_id, username, rating, comment)
+      .then( () => {
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {    
+          navigator.serviceWorker.ready
+            .then( (registration) => {
+              registration.sync.register('sync-reviews').then(() => {
+                console.log('sync reviews is registered');
+              })
+            })
+        }
+      })
+      .catch(err => console.log("Error submitting review: ", err));
+  })
+}
+  
+
+
+
+
+
+saveReviewsLocally = (restaurant_id, username, rating, comment) => {
+  let newReviewData = { 
+    id: 315,   
+    restaurant_id: restaurant_id,
+    name: username,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    rating: rating,
+    comments: comment,
+    status: 'pending'
+  }
+
+  return IDBHelper.addData('reviews', newReviewData);
+  //return IDBHelper.addData('tempreviews', newReviewData);
 }

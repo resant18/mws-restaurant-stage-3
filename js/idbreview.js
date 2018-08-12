@@ -28,9 +28,8 @@ class IDBReview {
    * Return reviews for all restaurants data
    */
   
-  static fetchReviewsByRestaurantId(saveToDatabase) {    
-    let fetchReviewByRestaurant;
-    const id = getParameterByName('id');
+  static fetchReviewsByRestaurantId(saveToDatabase, id) {    
+    let fetchReviewByRestaurant;    
     return fetch(`${SERVER_URL}/reviews?restaurant_id=${id}`)            //fetch from the network    
       .then( (response) => response.json())                
       .then( (reviews) => {                      // save restaurants data to database                               
