@@ -407,24 +407,17 @@ nav {
   .revrating {
     display: inline-block;
     margin-block-end: 1em;    
-        
+    unicode-bidi: bidi-override;
+    direction: rtl;        
   } 
   .revrating > span {
     display: inline-block;    
     width: 1.1em;
+  }  
+  .revrating > span:hover:before,
+  .revrating > span:hover ~ span:before {      
+     color: $data-link-color-active;
   }
-  .revrating > span:hover ~ span { 
-    color: #333;
-  }
-  .revrating:hover span,
-  .revrating > span:hover {        
-     color: #f18200;     
-  }
-  // .revrating > span:hover:before,
-  // .revrating > span:hover ~ span:before {
-  //    content: "\f005";
-  //    color: #f18200;     
-  // }
 }
 
 /* =======================================================================================

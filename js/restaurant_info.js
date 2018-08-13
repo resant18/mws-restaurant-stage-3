@@ -10,7 +10,7 @@ const monthNames = [
  * Initialize map as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {   
-  initMap();  
+  initMap();   
 });
 
 /**
@@ -50,6 +50,7 @@ fetchRestaurantFromURL = () => {
 
   if ('serviceWorker in navigator') {    
     console.log('service worker in control');
+    if (!'SyncManager' in window) syncRestaurantReview();
     return IDBHelper.getData('restaurants', 'by-id', restaurant_id)
       .then( (restaurantFromDatabase) => {              
         if (restaurantFromDatabase.length == 0) {
@@ -95,15 +96,16 @@ fetchReviewsByRestaurant = () => {
         self.reviews = reviews;
         fillReviewsHTML();
         Promise.resolve();
-      })
+      })      
   } else {    
     IDBRestaurant.fetchReviewsByRestaurantId(false, restaurant_id)
       .then( (reviews) => {        
         fillReviewsHTML(reviews);
         Promise.resolve(); 
       })
-  }
+  }  
 }
+
 
 /**
  * Generate randomly Bacon ipsum (in place of Lorem ipsum) for restaurant description
@@ -254,8 +256,9 @@ createReviewHTML = (review) => {
 createRatingStar = (rating) => {
   const rating_max = 5;
   let rating_html = '';
-  let i = 1;
-  if (rating != 0) {
+  let i;
+  if (rating != 0) { 
+    i = 1;
     while (i <= rating_max) {
       if ((i <= rating) && (i <= rating_max)) {
         rating_html += `<span class='fa fa-star checked'></span>`;
@@ -265,10 +268,12 @@ createRatingStar = (rating) => {
       i++;
     }
   }
-  else {
-    while (i <= rating_max) {
-      rating_html += `<span class='fa fa-star' id='${i}' data-rating='${i}'></span>`;      
-      i++;
+  else {  
+    i = 5;   
+    rating_html = ''; 
+    while (i >= 1) {
+      rating_html += `<span class='fa fa-star' data-rating='${i}'></span>`;      
+      i--;
     }
   }  
   return rating_html;
@@ -344,17 +349,19 @@ createAddReviewForm = () => {
   inputName.type = 'text';
   inputName.placeholder = 'Your name...';
   inputName.setAttribute('type', 'text');
+  inputName.setAttribute('required', true);
   form.appendChild(labelName);
   form.appendChild(inputName);
   
   const labelReview = document.createElement('label');
-  const inputReview = document.createElement('textarea');  
+  const inputReview = document.createElement('textarea');    
   labelReview.setAttribute('for', 'review_comment');
   labelReview.innerHTML = 'Your review';
   inputReview.id = 'review_comment';
   inputReview.name = 'review_comment';
   inputReview.placeholder = 'Write your review here...';
   inputReview.rows = '5';
+  inputReview.setAttribute('required', true);
   form.appendChild(labelReview);
   form.appendChild(inputReview);
   
@@ -366,27 +373,26 @@ createAddReviewForm = () => {
   buttonSubmit.innerHTML = 'Submit Review';
   form.appendChild(buttonSubmit);  
 
-  //var x = document.getElementById('rating').children;
-  //console.log(x[1].className);
-
-  
+  let selectedRating;  
   rating.addEventListener('click', (event) => {  
-    let action = 'add';  
+    let action = 'remove';   
     for(let span of rating.children) {      
-      if (action === 'add') span.classList[action]('checked');      
-      if (span === event.target) action = 'remove';
+      if (span === event.target) {
+        action = 'add';
+        selectedRating = span.getAttribute('data-rating');
+      }
+      span.classList[action]('checked');            
     }
   })
 
   /**
    * Post review of a restaurant.
-   */
-  
+   */  
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     // TODO: Update the rating with the real data
-    var rating = Math.floor(Math.random() * 6);   
+    var rating = selectedRating; //Math.floor(Math.random() * 6);   
     var username = this['review_username'].value;
     var comment = this['review_comment'].value;    
 

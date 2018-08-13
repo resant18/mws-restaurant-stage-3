@@ -371,16 +371,15 @@ nav h1 a {
 #add-review-dialog .revrating {
   display: inline-block;
   -webkit-margin-after: 1em;
-  margin-block-end: 1em; }
+  margin-block-end: 1em;
+  unicode-bidi: bidi-override;
+  direction: rtl; }
 
 #add-review-dialog .revrating > span {
   display: inline-block;
   width: 1.1em; }
 
-#add-review-dialog .revrating > span:hover ~ span {
-  color: #333; }
-
-#add-review-dialog .revrating:hover span, #add-review-dialog .revrating > span:hover {
+#add-review-dialog .revrating > span:hover:before, #add-review-dialog .revrating > span:hover ~ span:before {
   color: #f18200; }
 
 .button {
