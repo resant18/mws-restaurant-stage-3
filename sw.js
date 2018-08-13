@@ -68,7 +68,8 @@ self.addEventListener('fetch', (event) => {
       return;
     }
 
-    event.respondWith(
+    console.log(event.request);
+    event.respondWith(      
       caches.match(event.request).then( (response) => {
         return response || fetch(event.request);
       })

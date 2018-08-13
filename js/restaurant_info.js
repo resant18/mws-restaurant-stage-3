@@ -56,8 +56,7 @@ fetchRestaurantFromURL = () => {
           return IDBRestaurant.fetchRestaurants(true)
             .then( (fetchedRestaurants) => {
               if (fetchedRestaurants.length != 0) { //return IDBHelper.getData('restaurants', 'by-id', restaurant_id);            
-                for (let fetchedRestaurant of fetchedRestaurants) {
-                  console.log(fetchedRestaurant.id);
+                for (let fetchedRestaurant of fetchedRestaurants) {                  
                   if (fetchedRestaurant.id == restaurant_id) return Promise.resolve(fetchedRestaurant);
                 }
               }
@@ -233,7 +232,7 @@ createReviewHTML = (review) => {
 
   const date = document.createElement('p');  
   const utcDate = new Date(review.createdAt);
-  const formattedReviewDate = `${monthNames[utcDate.getMonth()]} ${utcDate.getDay()}, ${utcDate.getFullYear()}`;
+  const formattedReviewDate = `${monthNames[utcDate.getMonth()]} ${utcDate.getDate()}, ${utcDate.getFullYear()}`;
   date.innerHTML = formattedReviewDate;
   date.classList.add('revdate');
   li.appendChild(date);
@@ -406,27 +405,46 @@ createAddReviewForm = () => {
             })
         }
       })
+      .then (() => {
+        clearAddReviewForm(this);
+      })      
       .catch(err => console.log("Error submitting review: ", err));
   })
 }
   
+clearAddReviewForm = (form) => {
+  form['review_username'].value = "";
+  form['review_comment'].value = "";
 
+  for(let span of rating.children) {      
+    span.classList.remove('checked');
+  }
+}
 
 
 
 
 saveReviewsLocally = (restaurant_id, username, rating, comment) => {
+  let createdDate = Date.now();
   let newReviewData = { 
-    id: 315,   
+    id: Number(createdDate),   
     restaurant_id: restaurant_id,
     name: username,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    createdAt: createdDate,
+    updatedAt: createdDate,
     rating: rating,
     comments: comment,
     status: 'pending'
   }
-
+  
+  const ul = document.getElementById('reviews-list');
+  const newReviewHtml = createReviewHTML(newReviewData);
+  console.log(newReviewHtml);
+  ul.appendChild(newReviewHtml);
+  
   return IDBHelper.addData('reviews', newReviewData);
+
+
+
   //return IDBHelper.addData('tempreviews', newReviewData);
 }

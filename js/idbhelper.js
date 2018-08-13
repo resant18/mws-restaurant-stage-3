@@ -1,5 +1,5 @@
 const IDB_NAME = 'mwsrestaurants';
-const IDB_VERSION = 4;
+const IDB_VERSION = 2;
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVzYW50IiwiYSI6ImNqaW5oNXpwMjA5ZnQzd3BiMmtrNWFueHYifQ.SA7IDB7hI_d6bT5RtGeQfg';
 const SERVER_URL = 'http://localhost:1337';
 
@@ -23,7 +23,7 @@ class IDBHelper {
   /**
    * Create IndexDB database in client browser. Return Promise
    */
-  static get idb() {
+  static get idb() {    
     return idb.open(IDB_NAME, IDB_VERSION, (upgradeDb) => {
       console.log('open database');
       switch(upgradeDb.oldVersion) {
@@ -31,19 +31,13 @@ class IDBHelper {
           var dbRestaurants = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
           dbRestaurants.createIndex('by-id', 'id');              
         case 1:        
-          var dbReviews = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
+          var dbReviews = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});            
           dbReviews.createIndex('by-id', 'id');  
           dbReviews.createIndex('by-restaurantId', 'restaurant_id');  
           dbReviews.createIndex('by-status', 'status');                    
         case 2:        
           var dbFavorites = upgradeDb.createObjectStore('favorites', {keyPath: 'id'}); 
-          dbFavorites.createIndex('by-id', 'id');      
-        case 3: 
-          var dbTempReviews = upgradeDb.createObjectStore('tempreviews', {
-            keyPath: 'id',
-            autoIncrement: true
-          });   
-
+          dbFavorites.createIndex('by-id', 'id');               
       }
     })
     .catch(err => {                    

@@ -52,25 +52,52 @@ syncRestaurantReview = () => {
   console.log('sync review process begin');
   return IDBHelper.getData('reviews','by-status','pending')
   .then ( (pendingReviews) => {
+    console.log('pendingReviews:');
+    console.log(pendingReviews.length);
+    console.log(pendingReviews);    
     return Promise.all(pendingReviews.map( (pendingReview) => {
       let url = `${SERVER_URL}/reviews/`;
+      var data = {
+        restaurant_id: pendingReview.restaurant_id,
+        name: pendingReview.name,        
+        createdAt: pendingReview.createdAt,
+        updatedAt: pendingReview.updatedAt,
+        rating: pendingReview.rating,
+        comments: pendingReview.comments
+      };
       return fetch(url, {
         method: 'POST',
-        body: JSON.stringify(pendingReview)
+        body: JSON.stringify(data)
       })
       .then( (response) => {
-        return response.json();
-      })
-      // .then ( (data) => {
-      //   if (data.result === 'success') {
-      //     return IDBHelper.removeData('tempreviews', false, 'id', review.id);
-      //   }
-      // });
+        if (!response.ok) throw Error(response.statusText);
+        if (response.ok) {
+          //IDBHelper.removeData('reviews', 'by-id', 'id', data.createdAt);
+          data.id = data.createdAt;
+          IDBHelper.addData('reviews', data);                
+        };
+      });      
     }));
-  });  
+  })
+  .catch( (err) => {
+    console.log('Review sync is failed: ' + err);
+  })  
 }
 
-
+fetchApi = (url, method, body) => {  
+  let initParams;
+  if (body) {
+    initParams = `method: ${method}, body: JSON.stringify(${body})`;
+  } else {
+    initParams = `method: ${method}`;
+  }
+  return fetch(url, {initParams})
+  .then( (response) => {
+    if (!response.ok) throw Error(response.statusText);
+    return response;
+  })
+  
+}
 
 
 

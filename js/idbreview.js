@@ -22,15 +22,41 @@ class IDBReview {
   }
 
   /**
-   * Fetch Restaurant Review Data.
+   * Fetch Restaurant Review Data by Review ID.
+   * Check if the data was stored before, if not then add data to database. 
+   * Parameter: saveToDatabase, to save to IDB Promise if service worker is supported.
+   * Return a reviews based on Review ID
+   */
+  
+  static fetchReviewById(saveToDatabase, review_id) {    
+    let fetchReviewById;    
+    return fetch(`${SERVER_URL}/reviews/${review_id}`)            //fetch from the network    
+      .then( (response) => response.json())                
+      .then( (reviews) => {                      // save restaurants data to database                               
+        fetchReviewById = reviews;               
+        let sequence = Promise.resolve();        
+        if (saveToDatabase) reviews.forEach((review) => sequence = sequence.then(() => IDBReview.addToDatabase(review)) );        
+        return sequence;        
+      })      
+      .then(() => {                
+        return fetchReviewById;
+      })      
+      .catch(err => {                    
+        const error = (`Fetching review by restaurant id failed. Returned status of ${err}`);                    
+        return Promise.reject(error);
+      }); 
+  }
+
+  /**
+   * Fetch Restaurant Review Data by Restaurant ID.
    * Check if the data was stored before, if not then add data to database. 
    * Parameter: saveToDatabase, to save to IDB Promise if service worker is supported.
    * Return reviews for all restaurants data
    */
   
-  static fetchReviewsByRestaurantId(saveToDatabase, id) {    
+  static fetchReviewsByRestaurantId(saveToDatabase, restaurant_id) {    
     let fetchReviewByRestaurant;    
-    return fetch(`${SERVER_URL}/reviews?restaurant_id=${id}`)            //fetch from the network    
+    return fetch(`${SERVER_URL}/reviews?restaurant_id=${restaurant_id}`)            //fetch from the network    
       .then( (response) => response.json())                
       .then( (reviews) => {                      // save restaurants data to database                               
         fetchReviewByRestaurant = reviews;               

@@ -34,15 +34,12 @@ class IDBRestaurant {
     return fetch(`${SERVER_URL}/restaurants`)            //fetch from the network    
       .then( (response) => response.json())                
       .then( (restaurants) => {                      // save restaurants data to database                               
-        fetchedRestaurants = restaurants;       
-        console.log('Fetched restaurants='+fetchedRestaurants);
+        fetchedRestaurants = restaurants;               
         let sequence = Promise.resolve();        
-        if (saveToDatabase) restaurants.forEach((restaurant) => sequence = sequence.then(() => IDBRestaurant.addToDatabase(restaurant)) );
-        //console.log('Sequence='+sequence);        
+        if (saveToDatabase) restaurants.forEach((restaurant) => sequence = sequence.then(() => IDBRestaurant.addToDatabase(restaurant)) );            
         return sequence;        
       })      
       .then(() => {        
-        console.log('return fetchedRestaurants= '+fetchedRestaurants);
         return fetchedRestaurants;
       })      
       .catch(err => {                    
