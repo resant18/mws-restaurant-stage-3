@@ -59,7 +59,7 @@
     <section id="restaurant-info">
       <div>
         <h2 id="restaurant-name"></h2>
-        <span class="fa fa-map-marker" aria-hidden></span>        
+        <span class="fa fa-map-marker" aria-hidden="true"></span>        
         <p id="restaurant-address" class="bold"></p>
         <p id="restaurant-description"></p>
       </div>
@@ -72,7 +72,7 @@
     </section>      
     <!-- Beginning map -->
     <section id="map-container">
-        <h3>Get Direction</span></h3>
+        <h3>Get Direction</span></h3><a href="#add-review" tabindex="0" class="skip-link">Skip map navigation</a>
         <div id="map" aria-label="Map of restaurants" role="application"></div>
       </section>
       <!-- End map -->    
@@ -84,12 +84,12 @@
     <section id="reviews-container">   
       <div id="reviews-header"></div>
       <ul id="reviews-list" aria-label="List of restaurants review"></ul>
+      <div id="add-review-dialog" class="dialog review" role="dialog" aria-labelledby="dialog-review-title" 
+       aria-describedby="dialog-review-info" aria-hidden="true"></div>      
     </section>
     <!-- End reviews -->
-  </main>
-  <div id="add-review-dialog" class="dialog review" role="dialog" aria-labelledby="dialog-review-title" 
-       aria-describedby="dialog-review-info" aria-hidden="true"></div>
-  <!-- End main -->
+  </main>  
+  <!-- End main -->  
   <!-- Beginning footer -->
   <footer id="footer">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.

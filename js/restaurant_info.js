@@ -204,10 +204,12 @@ fillReviewsHTML = (reviews = self.reviews) => {
   title.innerHTML = 'Reviews';
   container_header.appendChild(title);
 
-  const review_button = document.createElement('button');
-  review_button.id = 'add-review';
-  review_button.innerHTML = "+";
-  container_header.appendChild(review_button);
+  // const add_review_link = document.createElement('a');
+  // add_review_link.id = 'add-review';
+  // add_review_link.innerHTML = 'Add New Review';
+  // add_review_link.className = 'button';
+  // add_review_link.href = '#add-review-dialog';
+  // container_header.appendChild(add_review_link);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -270,11 +272,12 @@ createRatingStar = (rating) => {
   }
   else {  
     i = 5;   
-    rating_html = ''; 
+    rating_html = ``; 
     while (i >= 1) {
       rating_html += `<span class='fa fa-star' data-rating='${i}'></span>`;      
       i--;
     }
+    //rating_html += `</div>`;
   }  
   return rating_html;
 }
@@ -333,8 +336,9 @@ createAddReviewForm = () => {
   const rating = document.createElement('div'); 
   rating.id = 'rating';  
   rating.className = 'revrating';  
+  rating.tabIndex = 0;
   rating.innerHTML = createRatingStar(0);  
-  labelRating.setAttribute('for', 'review_rating');
+  labelRating.setAttribute('for', 'rating');
   labelRating.innerHTML = 'Select your rating: ';
   form.appendChild(labelRating);
   form.appendChild(rating);
@@ -373,7 +377,7 @@ createAddReviewForm = () => {
   buttonSubmit.innerHTML = 'Submit Review';
   form.appendChild(buttonSubmit);  
 
-  let selectedRating;  
+  let selectedRating = 0;  
   rating.addEventListener('click', (event) => {  
     let action = 'remove';   
     for(let span of rating.children) {      
@@ -390,9 +394,13 @@ createAddReviewForm = () => {
    */  
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    
+    if (selectedRating == 0) {
+      window.alert('Please select the rating to submit your review.');
+      return;
+    }
 
-    // TODO: Update the rating with the real data
-    var rating = selectedRating; //Math.floor(Math.random() * 6);   
+    var rating = selectedRating; 
     var username = this['review_username'].value;
     var comment = this['review_comment'].value;    
 
@@ -421,14 +429,12 @@ createAddReviewForm = () => {
 clearAddReviewForm = (form) => {
   form['review_username'].value = "";
   form['review_comment'].value = "";
+  selectedRating = 0;
 
   for(let span of rating.children) {      
     span.classList.remove('checked');
   }
 }
-
-
-
 
 saveReviewsLocally = (restaurant_id, username, rating, comment) => {
   let createdDate = Date.now();
@@ -444,13 +450,8 @@ saveReviewsLocally = (restaurant_id, username, rating, comment) => {
   }
   
   const ul = document.getElementById('reviews-list');
-  const newReviewHtml = createReviewHTML(newReviewData);
-  console.log(newReviewHtml);
+  const newReviewHtml = createReviewHTML(newReviewData);  
   ul.appendChild(newReviewHtml);
   
   return IDBHelper.addData('reviews', newReviewData);
-
-
-
-  //return IDBHelper.addData('tempreviews', newReviewData);
 }

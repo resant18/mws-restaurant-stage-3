@@ -235,7 +235,6 @@ createRestaurantHTML = (restaurant) => {
   let svg = document.createElementNS(namespace, 'svg');
   
   svg.setAttribute('class', is_favorite_class);
-  svg.setAttribute('id', 'icon-heart');
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('width', '72%');
   svg.setAttribute('height', '72%');
@@ -314,30 +313,6 @@ addEventToFavoriteButton = () => {
   }
 }
 
-/*
-handleFetchError = (response) => {
-  if (!response.ok) throw Error(response.statusText);
-  return response;
-}
-
-postFavoritedRestaurants = (restaurant_id, is_favorite) => {    
-  let url = `${SERVER_URL}/restaurants/${restaurant_id}/?is_favorite=${is_favorite}`;
-    fetch(url, {
-      method: 'PUT'        
-    })
-    .then(handleFetchError)
-    .then( (response) => {
-      if(response.ok) {
-        console.log('update data in server succeed');
-        IDBHelper.removeData('favorites', false, 'id', restaurant_id);  
-      }
-    })
-    .catch( (error) => {
-      console.log('There has been a problem with your fetch operation: ', error.message);
-    });
-}
-*/
-
 toggleFavorite = (buttonElement) => {    
   const restaurant_id = Number(buttonElement.getAttribute('data-id'));  
   const button_state = buttonElement.firstChild.classList.toggle('icon-heart-favorited'); //switch the button state
@@ -345,34 +320,30 @@ toggleFavorite = (buttonElement) => {
   buttonElement.setAttribute('aria-pressed', !(buttonElement.getAttribute('aria-pressed')));          
 
   IDBHelper.getData('restaurants', 'by-id', restaurant_id)
-  .then((selectedRestaurant) => {
+  .then( (selectedRestaurant) => {
     if (selectedRestaurant.length === 0) return;
     IDBHelper.getData('favorites', 'by-id', restaurant_id)
-    .then((favoritedRestaurant) => {
+    .then( (favoritedRestaurant) => {
       let updatedRestaurant = selectedRestaurant[0];
       let localUpdateTasks = [];
       updatedRestaurant.is_favorite = button_state;
-      if ( favoritedRestaurant.length === 0 ) {            
-        //TODO: change to promise.all    
-        localUpdate = [
+      if ( favoritedRestaurant.length === 0 ) {                    
+        localUpdateTasks = [
           IDBHelper.addData('favorites', updatedRestaurant),
           IDBHelper.addData('restaurants', updatedRestaurant)
         ];        
       } else {     
-        localUpdate = [       
+        localUpdateTasks = [       
           IDBHelper.removeData('favorites', false, 'id', restaurant_id),     
           IDBHelper.addData('restaurants', updatedRestaurant)
         ];
       }
       Promise.all(localUpdateTasks)
-      .then( (x) => {
+      .then( () => {
         if ('serviceWorker' in navigator && 'SyncManager' in window) {    
           navigator.serviceWorker.ready
-          .then( (registration) => {
-            //return registration.sync.register('sync-favorites');
-              registration.sync.register('sync-favorites').then(() => {
-                console.log('Register sync');
-            });
+          .then( (registration) => {            
+              registration.sync.register('sync-favorites');
           })
         }
       }) 

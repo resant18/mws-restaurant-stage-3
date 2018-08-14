@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 $data-link-color: orange;
-$data-link-color-active: #f18200; 
+$data-link-color-active: #dd7803; 
 $content-width: 960px;
 $background-img: url(../img/white_carbonfiber.png) repeat; 
 
@@ -355,7 +355,7 @@ nav {
   }
   #add-review {
     position: absolute;
-    top: 0;
+    top: -8px;
     right: 0;
   }
   #reviews-list {
@@ -397,27 +397,33 @@ nav {
     padding: 12px;      
     margin-top: 6px;
     margin-bottom: 16px;    
-  }
-  &.button {
-    width: 160px;
-  }
-  #label_review_username {
-    display: block;
-  }
+  }  
   .revrating {
     display: inline-block;
     margin-block-end: 1em;    
     unicode-bidi: bidi-override;
-    direction: rtl;        
-  } 
-  .revrating > span {
-    display: inline-block;    
-    width: 1.1em;
-  }  
-  .revrating > span:hover:before,
-  .revrating > span:hover ~ span:before {      
-     color: $data-link-color-active;
+    direction: rtl;           
+    & > span {
+      display: inline-block;    
+      margin: 2px;
+      font-size: 1.25em;
+    }  
+    & > span:hover,
+    & > span:focus,
+    & > span:hover ~ span,
+    & > span:focus ~ span {            
+      color: $data-link-color-active;
+      cursor: pointer;
+    }  
   }
+}
+#submit_review {
+  width: 160px;
+  float: right;
+  margin-bottom: 30px;
+}  
+#label_review_username {
+  display: block;
 }
 
 /* =======================================================================================
@@ -473,5 +479,15 @@ input[type=text], select, textarea {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+//This is to improve Accessibility Score in Chrome Dev Tools Audit Tool
+div.leaflet-control a {
+  color: #531fff;  
+  &:hover, &:focus {
+    color: #bb1122;
+  }
+  &:visited {
+    color: #884488;
+  }
 }
 @import 'responsive';

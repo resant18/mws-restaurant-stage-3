@@ -10,14 +10,18 @@ let staticFilesName = [
   '/dist/img/favicon.png',
   '/dist/img/favicon-196.png',  
   '/dist/img/favicon-512.png',  
-//   '/index.html',
-//   '/restaurant.html',
-//   '/dist/css/styles.css',
-//   '/js/lib/idb.js', 
-//   '/js/idbhelper.js',
-//   '/js/main.js',
-//   '/js/restaurant_info.js',
-//   '/dist/js/bundle.min.js',
+  '/index.html',
+  '/restaurant.html',
+  '/dist/css/styles.css',
+  '/js/lib/idb.js', 
+  '/js/idbhelper.js',
+  '/js/app.js',
+  '/js/idbrestaurant.js',
+  '/js/idbreview.js',
+  '/js/main.js',
+  '/js/restaurant_info.js',
+  '/js/sync.js',
+  // '/dist/js/bundle.min.js',
   'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js',
   'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
   'https://unpkg.com/leaflet@1.3.1/dist/images/marker-icon.png',
@@ -68,11 +72,11 @@ self.addEventListener('fetch', (event) => {
       return;
     }
 
-    console.log(event.request);
+    //console.log(event.request);
     event.respondWith(      
       caches.match(event.request).then( (response) => {
         return response || fetch(event.request);
-      })
+      })      
     );
   }
   

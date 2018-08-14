@@ -1,7 +1,7 @@
 {
   "name": "Restaurant Review",
-  "short_name": "Restaurant Review",
-  "description": "Udacity Grow with Google Mobile Web Specialist Scholarship Project Stage 1",
+  "short_name": "Rest Review",
+  "description": "Udacity Grow with Google Mobile Web Specialist Scholarship Project Stage 3",
   "icons": [
     {
       "src": "dist/img/favicon.png",
