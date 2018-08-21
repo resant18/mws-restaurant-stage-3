@@ -377,7 +377,7 @@ createAddReviewForm = () => {
   buttonSubmit.innerHTML = 'Submit Review';
   form.appendChild(buttonSubmit);  
 
-  let selectedRating = 0;  
+  let selectedRating;  
   rating.addEventListener('click', (event) => {  
     let action = 'remove';   
     for(let span of rating.children) {      
