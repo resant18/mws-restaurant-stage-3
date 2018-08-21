@@ -377,7 +377,7 @@ createAddReviewForm = () => {
   buttonSubmit.innerHTML = 'Submit Review';
   form.appendChild(buttonSubmit);  
 
-  let selectedRating = 0;  
+  let selectedRating;  
   rating.addEventListener('click', (event) => {  
     let action = 'remove';   
     for(let span of rating.children) {      
@@ -451,7 +451,7 @@ saveReviewsLocally = (restaurant_id, username, rating, comment) => {
   
   const ul = document.getElementById('reviews-list');
   const newReviewHtml = createReviewHTML(newReviewData);  
-  ul.appendChild(newReviewHtml);
+  ul.prepend(newReviewHtml);
   
   return IDBHelper.addData('reviews', newReviewData);
 }
