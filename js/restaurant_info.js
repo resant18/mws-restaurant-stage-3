@@ -451,7 +451,7 @@ saveReviewsLocally = (restaurant_id, username, rating, comment) => {
   
   const ul = document.getElementById('reviews-list');
   const newReviewHtml = createReviewHTML(newReviewData);  
-  ul.appendChild(newReviewHtml);
+  ul.prepend(newReviewHtml);
   
   return IDBHelper.addData('reviews', newReviewData);
 }
