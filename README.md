@@ -170,7 +170,7 @@ Please read [CONTRIBUTING.md]() for details on our code of conduct, and the proc
 ## Authors
 
 * **Renata Santoso**
-* **Udacity** - *Initial work* - [Udacity](https://github.com/udacity/mws-restaurant-stage-1)
+* **Udacity** - *skeleton* - [Udacity](https://github.com/udacity/mws-restaurant-stage-1)
  
 
 
