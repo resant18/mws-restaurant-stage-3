@@ -7,6 +7,7 @@ let allCaches = [
 ];
 
 let staticFilesName = [
+  '/',
   '/dist/img/favicon.png',
   '/dist/img/favicon-196.png',  
   '/dist/img/favicon-512.png',  

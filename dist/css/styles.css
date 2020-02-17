@@ -381,7 +381,8 @@ nav h1 a {
 #submit_review {
   width: 160px;
   float: right;
-  margin-bottom: 30px; }
+  margin-bottom: 30px;
+  }
 
 #label_review_username {
   display: block; }
