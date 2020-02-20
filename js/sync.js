@@ -1,8 +1,8 @@
 syncFavoritedRestaurants = () => {
-  //console.log('sync process begins');
+  ////console.log('sync process begins');
   IDBHelper.getData('favorites', 'by-id')    
   .then((favoritedRestaurant) => {     
-    //console.log("favorites restaurant is " + favoritedRestaurant.length) 
+    ////console.log("favorites restaurant is " + favoritedRestaurant.length) 
     favoritedRestaurant.forEach( (restaurant) => {
       postFavoritedRestaurants(restaurant.id, restaurant.is_favorite);
     })
@@ -16,17 +16,17 @@ postFavoritedRestaurants = (restaurant_id, is_favorite) => {
   })    
   .then( (response) => {
     if(response.ok) {
-      console.log('update data in server succeed');
+      //console.log('update data in server succeed');
       IDBHelper.removeData('favorites', false, 'id', restaurant_id);  
     }
   })
   .catch( (error) => {
-    console.log('There has been a problem with your fetch operation: ', error.message);
+    //console.log('There has been a problem with your fetch operation: ', error.message);
   });
 }
 
 syncRestaurantReview = () => {
-  console.log('sync review process begin');
+  //console.log('sync review process begin');
   return IDBHelper.getData('reviews','by-status','pending')
   .then ( (pendingReviews) => {    
     return Promise.all(pendingReviews.map( (pendingReview) => {
@@ -51,12 +51,12 @@ syncRestaurantReview = () => {
         };
       })
       .catch( (err) => {
-        console.log('Upload review to server is failed');
+        //console.log('Upload review to server is failed');
       })      
     }));
   })
   .catch( (err) => {
-    console.log('Review sync is failed: ' + err);
+    //console.log('Review sync is failed: ' + err);
   })  
 }
 

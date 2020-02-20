@@ -7,36 +7,36 @@ function registerServiceWorker() {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js', {scope: '/'}).then((reg) => {  
         // registration worked      
-        console.log('Service worker registration succeeded. Scope is ' + reg.scope);      
+        //console.log('Service worker registration succeeded. Scope is ' + reg.scope);      
 
         // If there’s no controller that means this page didn’t load using service worker, 
         // but load the content from the network taking the latest version. In that case, exit early.
         if (!navigator.serviceWorker.controller) {
-          console.log('This page is not currently controlled by a service worker.');
+          //console.log('This page is not currently controlled by a service worker.');
           return;
         }
         
         if (reg.waiting) {
           updateReady(reg.waiting);
-          console.log('Service worker is waiting');
+          //console.log('Service worker is waiting');
           return;
         }
 
         if (reg.installing) {
           trackInstalling(reg.installing);
-          console.log('Service worker is installing');
+          //console.log('Service worker is installing');
           return;
         }
     
         reg.addEventListener('updatefound', function() {
           trackInstalling(reg.installing);
-          console.log('New update is found');
+          //console.log('New update is found');
           return;
         });
         
       }).catch((error) => {
         // registration failed    
-        console.log('Registration failed with ' + error);   
+        //console.log('Registration failed with ' + error);   
         return;
       });
 
@@ -45,13 +45,13 @@ function registerServiceWorker() {
       var refreshing;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         //if (refreshing) return;
-        console.log('Reload...');
+        //console.log('Reload...');
         window.location.reload();
         //refreshing = true;
       });
     });
   } else {
-    console.log('Service worker is not supported by your browser'); 
+    //console.log('Service worker is not supported by your browser'); 
     return;
   }
 }
@@ -105,18 +105,18 @@ let staticFilesName = [
 ]
 
 self.addEventListener('install', (event) => {  
-  console.log('Install service worker and cache static assets');
+  //console.log('Install service worker and cache static assets');
   event.waitUntil(
     caches.open(staticCacheName)
     .then( (cache) => {
-      console.log('Caching sucess'); //test
+      //console.log('Caching sucess'); //test
       return cache.addAll(staticFilesName);
     })    
   );
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('Activating new service worker...');
+  //console.log('Activating new service worker...');
   //TODO: create database in this event based on article: https://developers.google.com/web/ilt/pwa/live-data-in-the-service-worker#storing_data_with_indexeddb
   event.waitUntil(
     caches.keys().then( (cacheNames) => {
@@ -134,7 +134,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  //console.log(`Fetching ${event.request.url}`);
+  ////console.log(`Fetching ${event.request.url}`);
   event.respondWith(
     caches.open(allCaches).then( (cache) => {
       return cache.match(event.request).then( (response) => {
@@ -149,9 +149,9 @@ self.addEventListener('fetch', (event) => {
 
 // this function will be called by statement worker.postMessage({action: 'skipWaiting'}); from the active page
 self.addEventListener('message', (event) => {
-  console.log('Perform skip waiting');
+  //console.log('Perform skip waiting');
   if (event.data.action === 'skipWaiting') {
-    console.log('skip waiting....');
+    //console.log('skip waiting....');
     self.skipWaiting();
   }
 });
@@ -509,7 +509,7 @@ class IDBHelper {
     if (!window.location.origin) {
       window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
     };
-    //console.log(window.location.origin);
+    ////console.log(window.location.origin);
     //return `${window.location.origin}/data/restaurants.json`;    
     return SERVER_URL; 
   };
@@ -522,7 +522,7 @@ class IDBHelper {
     // we don't care about having a database
     
     if ((!navigator.serviceWorker) || (!'indexedDB' in window)) {
-      console.log('This browser doesn\'t support IndexedDB');
+      //console.log('This browser doesn\'t support IndexedDB');
       return Promise.reject();
     };    
     
@@ -546,7 +546,7 @@ class IDBHelper {
       const tx = db.transaction(dbStore);
       const store = tx.objectStore(dbStore);
       
-      if ( !check ) { console.log('check=' + check); return store.getAll(); }
+      if ( !check ) { //console.log('check=' + check); return store.getAll(); }
 
       const index = store.index(dbIndex);
       return index.getAll(check);
@@ -627,20 +627,20 @@ class IDBHelper {
     return fetch(IDBHelper.DATABASE_URL)            //fetch from the network    
       .then( (response) => response.json())       
       .then( (restaurants) => {                     // copy to Restaurant object class 
-        //console.log('restaurants='+restaurants);                           
+        ////console.log('restaurants='+restaurants);                           
         return restaurants.map( (restaurant) => new Restaurant(restaurant));        
       })      
       .then( (restaurants) => {                      // save Restaurant objects class to database                       
         fetchedRestaurants = restaurants;       
-        //console.log('Fetched restaurants='+fetchedRestaurants);
+        ////console.log('Fetched restaurants='+fetchedRestaurants);
         let sequence = Promise.resolve();
         /*if (saveToDatabase)*/ 
         restaurants.forEach((restaurant) => sequence = sequence.then(() => IDBHelper.addToDatabase(restaurant)) );
-        //console.log('Sequence='+sequence);        
+        ////console.log('Sequence='+sequence);        
         return sequence;        
       })      
       .then(() => {        
-        //console.log('return fetchedRestaurants= '+fetchedRestaurants);
+        ////console.log('return fetchedRestaurants= '+fetchedRestaurants);
         return fetchedRestaurants;
       })      
       .catch(err => {                    
@@ -656,10 +656,10 @@ class IDBHelper {
   
   static fetchRestaurantById(id) {
     // fetch all restaurants with proper error handling. 
-    console.log('fetching restaurant based on id');
+    //console.log('fetching restaurant based on id');
     return IDBHelper.fetchRestaurants()
       .then( (restaurants) => {    
-        //console.log(restaurants);
+        ////console.log(restaurants);
         const restaurant = restaurants.find(r => r.id == id);
         if (restaurant) { // Got the restaurant
           return Promise.resolve(restaurant);
@@ -675,7 +675,7 @@ class IDBHelper {
    */
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
-    console.log('fetch restauranrt by cuisine');
+    //console.log('fetch restauranrt by cuisine');
     IDBHelper.fetchRestaurants( (error, restaurants) => {
       if (error) {
         callback(error, null);
@@ -693,7 +693,7 @@ class IDBHelper {
    */
   static fetchRestaurantByNeighborhood(neighborhood, callback) {
     // Fetch all restaurants
-    console.log('fetch restauranrt by neighborhood');
+    //console.log('fetch restauranrt by neighborhood');
     IDBHelper.fetchRestaurants( (error, restaurants) => {
       if (error) {
         callback(error, null);
@@ -730,7 +730,7 @@ class IDBHelper {
    * Fetch all neighborhoods with proper error handling.
    */
   static fetchNeighborhoods(restaurants) {
-    //console.log(IDBHelper.fetchRestaurants);
+    ////console.log(IDBHelper.fetchRestaurants);
     // Fetch all restaurants
     return new Promise( (resolve, reject) => {      
       // Get all neighborhoods from all restaurants
@@ -827,7 +827,7 @@ fetchNeighborhoods = (restaurants) => {
     })
     .catch(err => {                    
       const error = (`Fill neighborhoods data filter failed. Returned status of ${err}`);            
-      console.log(error);
+      //console.log(error);
     });   
 }
 
@@ -855,7 +855,7 @@ fetchCuisines = (restaurants) => {
   })
   .catch(err => {                    
     const error = (`Fill cuisine data filter failed. Returned status of ${err}`);            
-    console.log(error);
+    //console.log(error);
   });    
 }
 
@@ -914,7 +914,7 @@ updateRestaurants = () => {
       fillRestaurantsHTML();      
     })
     .catch(err => {                    
-      console.log(error);
+      //console.log(error);
     }); 
 }
 */
@@ -940,7 +940,7 @@ updateRestaurants = () => {
         resolve(restaurants);
       })
       .catch(err => {                    
-        console.log(err);
+        //console.log(err);
         reject(err);
       }); 
   });
@@ -1059,7 +1059,7 @@ var newMap;
  * Initialize map as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => { 
-  console.log('Page is loaded'); 
+  //console.log('Page is loaded'); 
   initMap();
 });
 
@@ -1086,7 +1086,7 @@ initMap = () => {
     IDBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
   })
   .catch( (err) => {
-    console.log(err);
+    //console.log(err);
   }); 
 }
 
@@ -1102,12 +1102,12 @@ window.initMap = () => {
       scrollwheel: false
     });
     fillBreadcrumb();
-    console.log(self.restaurant);
-    console.log(self.map);
+    //console.log(self.restaurant);
+    //console.log(self.map);
     IDBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
   })
   .catch( (err) => {
-    console.log(err);
+    //console.log(err);
   })  
 }
 */
@@ -1128,7 +1128,7 @@ fetchRestaurantFromURL = () => {
     } else {
       IDBHelper.fetchRestaurantById(id)
         .then( (restaurant) => {
-          //console.log(restaurant);
+          ////console.log(restaurant);
           self.restaurant = restaurant;
           if (!restaurant) {
             console.error(error);
@@ -1156,7 +1156,7 @@ fetchRestaurantFromURL = (callback) => {
   } else {
     IDBHelper.fetchRestaurantById(id, (error, restaurant) => {      
       self.restaurant = restaurant;
-      console.log('restaurant =' + self.restaurant);
+      //console.log('restaurant =' + self.restaurant);
       if (!restaurant) {
         console.error(error);
         return;

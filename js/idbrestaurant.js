@@ -64,7 +64,7 @@ class IDBRestaurant {
         return Promise.resolve();        
       })      
       .then(() => {        
-        console.log('return fetchedRestaurants= '+fetchedRestaurant);
+        // //console.log('return fetchedRestaurants= '+fetchedRestaurant);
         return fetchedRestaurant;
       })      
       .catch(err => {                    
@@ -105,7 +105,7 @@ class IDBRestaurant {
    * Fetch all neighborhoods with proper error handling.
    */
   static fetchNeighborhoods(restaurants) {
-    //console.log(IDBRestaurant.fetchRestaurants);
+    ////console.log(IDBRestaurant.fetchRestaurants);
     // Fetch all restaurants
     return new Promise( (resolve, reject) => {      
       // Get all neighborhoods from all restaurants

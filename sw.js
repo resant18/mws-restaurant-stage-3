@@ -36,18 +36,18 @@ let staticFilesName = [
 
 
 self.addEventListener('install', (event) => {  
-  console.log('Install service worker and cache static assets');
+  // //console.log('Install service worker and cache static assets');
   event.waitUntil(
     caches.open(staticCacheName)
     .then( (cache) => {
-      console.log('Caching sucess'); //test
+      // //console.log('Caching sucess'); //test
       return cache.addAll(staticFilesName);
     })    
   );
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('Activating new service worker...');
+  // //console.log('Activating new service worker...');
   //TODO: create database in this event based on article: https://developers.google.com/web/ilt/pwa/live-data-in-the-service-worker#storing_data_with_indexeddb
   event.waitUntil(
     caches.keys().then( (cacheNames) => {
@@ -73,7 +73,7 @@ self.addEventListener('fetch', (event) => {
       return;
     }
 
-    //console.log(event.request);
+    ////console.log(event.request);
     event.respondWith(      
       caches.match(event.request).then( (response) => {
         return response || fetch(event.request);
@@ -86,29 +86,29 @@ self.addEventListener('fetch', (event) => {
 function serveRestaurantPhoto(request) {
   var storageUrl = request.url.replace(/_[a-zA-Z0-9]+\.(jpg|webp)$/, '');
   return caches.open(contentImgsCache).then(function(cache) {
-    //console.log('begin');
-    //console.log('url=' + storageUrl);    
+    ////console.log('begin');
+    ////console.log('url=' + storageUrl);    
     return cache.match(storageUrl).then( (response) => {   
-      //console.log(`response for ${storageUrl}:`);
-      //console.log(response);     
+      ////console.log(`response for ${storageUrl}:`);
+      ////console.log(response);     
       var networkFetch = fetch(request).then( (networkResponse) => {
-        //console.log(`network response for ${storageUrl}:`);
-        //console.log(networkResponse);        
+        ////console.log(`network response for ${storageUrl}:`);
+        ////console.log(networkResponse);        
         cache.put(storageUrl, networkResponse.clone());
-        //console.log('put in the cache');        
+        ////console.log('put in the cache');        
         return networkResponse;                
       });
       return response || networkFetch;      
     });
-    //console.log('end');
+    ////console.log('end');
   })
 }
 
 // this function will be called by statement worker.postMessage({action: 'skipWaiting'}); from the active page
 self.addEventListener('message', (event) => {
-  console.log('Perform skip waiting');
+  //console.log('Perform skip waiting');
   if (event.data.action === 'skipWaiting') {
-    console.log('skip waiting....');
+    //console.log('skip waiting....');
     self.skipWaiting();
   }
 });

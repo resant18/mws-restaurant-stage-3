@@ -25,7 +25,7 @@ class IDBHelper {
    */
   static get idb() {    
     return idb.open(IDB_NAME, IDB_VERSION, (upgradeDb) => {
-      console.log('open database');
+      // //console.log('open database');
       switch(upgradeDb.oldVersion) {
         case 0:        
           var dbRestaurants = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});

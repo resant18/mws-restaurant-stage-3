@@ -36,7 +36,7 @@ initMap = () => {
     IDBRestaurant.mapMarkerForRestaurant(self.restaurant, self.map);
   })
   .catch( (err) => {
-    console.log(err);
+    //console.log(err);
   }); 
 }
 
@@ -49,7 +49,7 @@ fetchRestaurantFromURL = () => {
   restaurant_id = Number(getParameterByName('id'));
 
   if ('serviceWorker in navigator') {    
-    console.log('service worker in control');
+    //console.log('service worker in control');
     if (!'SyncManager' in window) syncRestaurantReview();
     return IDBHelper.getData('restaurants', 'by-id', restaurant_id)
       .then( (restaurantFromDatabase) => {              
@@ -71,7 +71,7 @@ fetchRestaurantFromURL = () => {
         return Promise.resolve(self.restaurant);
       })
   } else {  
-    console.log('service worker is not in control');  
+    //console.log('service worker is not in control');  
     return IDBRestaurant.fetchRestaurantsById(false, restaurant_id)    
       .then( (restaurant) => {                
         fillRestaurantsHTML(restaurant);
@@ -414,7 +414,7 @@ createAddReviewForm = () => {
           navigator.serviceWorker.ready
             .then( (registration) => {
               registration.sync.register('sync-reviews').then(() => {
-                console.log('sync reviews is registered');
+                //console.log('sync reviews is registered');
               })
             })
         }
@@ -422,7 +422,7 @@ createAddReviewForm = () => {
       .then (() => {
         clearAddReviewForm(this);
       })      
-      .catch(err => console.log("Error submitting review: ", err));
+      .catch(err => //console.log("Error submitting review: ", err));
   })
 }
   
