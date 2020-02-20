@@ -4,6 +4,7 @@
   "description": "Udacity Google Mobile Web Specialist's Progressive Web Restaurant App Project",
   "main": "index.html",
   "dependencies": {
+    "concurrently": "^5.1.0",
     "eslint": "^4.19.1",
     "express": "^4.17.1",
     "gulp-eslint": "^4.0.2",
@@ -29,7 +30,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js && node server"        
+    "server": "node server",
+    "frontend": "node server.js",
+    "start": "concurrently \"npm run server\" \"npm run frontend\""
   },
   "repository": {
     "type": "git",
