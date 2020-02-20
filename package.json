@@ -1,10 +1,11 @@
 {
-  "name": "mws-restaurant-stage-1",
+  "name": "mws-restaurant-stage-3",
   "version": "1.0.0",
-  "description": "Udacity Mobile Web Specialist Restaurant Project",
+  "description": "Udacity Google Mobile Web Specialist's Progressive Web Restaurant App Project",
   "main": "index.html",
   "dependencies": {
     "eslint": "^4.19.1",
+    "express": "^4.17.1",
     "gulp-eslint": "^4.0.2",
     "gulp-image-resize": "^0.13.0",
     "gulp-rename": "^1.2.3",
@@ -23,12 +24,16 @@
     "gulp-uglify-es": "^1.0.4",
     "gulp-webp": "^3.0.0"
   },
+  "engines": {
+    "node": "9.7.1"
+  },
   "scripts": {
-    "test": "python -m SimpleHTTPServer 8000"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js && node server"        
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/resant18/mws-restaurant-stage-1.git"
+    "url": "git+https://github.com/resant18/mws-restaurant-stage-3.git"
   },
   "keywords": [
     "mws",
@@ -42,7 +47,7 @@
   "author": "Udacity & Renata Santoso",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/resant18/mws-restaurant-stage-1/issues"
+    "url": "https://github.com/resant18/mws-restaurant-stage-3/issues"
   },
-  "homepage": "https://github.com/resant18/mws-restaurant-stage-1#readme"
+  "homepage": "https://github.com/resant18/mws-restaurant-stage-3#readme"
 }
