@@ -422,7 +422,7 @@ createAddReviewForm = () => {
       .then (() => {
         clearAddReviewForm(this);
       })      
-      .catch(err => //console.log("Error submitting review: ", err));
+      .catch(err => console.log("Error submitting review: ", err));
   })
 }
   
