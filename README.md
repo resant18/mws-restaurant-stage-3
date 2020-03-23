@@ -1,6 +1,12 @@
 # Udacity Mobile Web Specialist Restaurant Review Project
 
-This is a case study project as part of Udacity Mobile Web Specialist Nanodegree which consist of three stages. The given initial code is gradually revised to achieve accesibility standard, more responsive. Moreover, offline first approach as a key characteristic of modern Progressive Web Application is also applied.   
+This is a case study project as part of Udacity Mobile Web Specialist Nanodegree which consist of three stages. The given initial code is gradually revised to achieve accesibility standard, more responsive. Moreover, offline first approach as a key characteristic of modern Progressive Web Application is also applied. 
+
+<div align="center">
+    <img width=70% src="./restaurant.png">    
+</div>
+
+<br>
 
 ## Getting Started
 
