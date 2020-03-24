@@ -1,7 +1,7 @@
 const IDB_NAME = 'mwsrestaurants';
 const IDB_VERSION = 2;
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVzYW50IiwiYSI6ImNqaW5oNXpwMjA5ZnQzd3BiMmtrNWFueHYifQ.SA7IDB7hI_d6bT5RtGeQfg';
-const SERVER_URL = 'http://localhost:1337';
+const SERVER_URL = window.location.href + ':1337';
 
 
 
@@ -16,7 +16,7 @@ class IDBHelper {
   static get DATABASE_URL() { 
     if (!window.location.origin) {
       window.location.origin = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-    };    
+    };            
     return window.location.origin; 
   };
 
