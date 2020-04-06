@@ -1,5 +1,7 @@
 {
   "data": {
+    "google": [],
+    "restaurant": [],
     "restaurants": [
       {
         "name": "Mission Chinese Food",
@@ -21,9 +23,9 @@
           "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095563444,
-        "updatedAt": "2017-09-14T14:01:27.653Z",
+        "updatedAt": "2020-04-04T22:42:06.751Z",
         "id": 1,
-        "is_favorite": false
+        "is_favorite": "true"
       },
       {
         "name": "Emily",
@@ -92,8 +94,8 @@
           "Sunday": "Sat - 10:30 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": 1504095567091,
-        "is_favorite": false,
+        "updatedAt": "2020-04-04T22:38:13.385Z",
+        "is_favorite": "true",
         "id": 4
       },
       {
@@ -116,8 +118,8 @@
           "Sunday": "10:00 am - 12:00 am"
         },
         "createdAt": 1504095567071,
-        "updatedAt": 1504095567071,
-        "is_favorite": false,
+        "updatedAt": "2020-04-04T22:39:22.210Z",
+        "is_favorite": "true",
         "id": 5
       },
       {
@@ -514,6 +516,20 @@
     ]
   },
   "schema": {
+    "google": {
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
     "restaurant": {
       "id": {
         "type": "integer",
@@ -566,6 +582,7 @@
     },
     "reviews": {
       "id": 30
-    }
+    },
+    "google": {}
   }
 }
