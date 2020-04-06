@@ -4,7 +4,7 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVzYW50IiwiYSI6ImNqaW5oNXpwMjA5ZnQzd3BiMmtrNWF
 // const SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":1337";
 // const SERVER_URL = 'http://localhost:1337';
 // const SERVER_URL = 'https://restaurant-review-pwa.herokuapp.com:1337';
-const SERVER_URL = 'https://restaurant-mws.herokuapp.com/';
+const SERVER_URL = 'https://restaurant-mws.herokuapp.com';
 
 
 /****************************************************************************************************************************
