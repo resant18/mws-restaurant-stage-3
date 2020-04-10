@@ -188,6 +188,8 @@ fillRestaurantsHTML = (restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
+  const divTop = document.createElement('div');
+  
   // implement responsive image using picture element with breakpoint 789px
   const pictureContainer = document.createElement('div');    
   const picture = document.createElement('picture');
@@ -204,7 +206,8 @@ createRestaurantHTML = (restaurant) => {
   source1.srcset = `${imageName}_small.webp`;
   source2.media = '(min-width: 790px)'
   source2.srcset = `${imageName}_medium.webp`;  
-  li.append(pictureContainer);
+  li.append(divTop);  
+  divTop.append(pictureContainer);
   pictureContainer.append(picture);
   picture.append(source1);
   picture.append(source2);
@@ -250,22 +253,24 @@ createRestaurantHTML = (restaurant) => {
 
   const name = document.createElement('h3');  
   name.innerHTML = restaurant.name;
-  li.append(name);
+  divTop.append(name);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
-  li.append(neighborhood);
+  divTop.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  li.append(address);  
+  divTop.append(address);  
 
+  const divBottom = document.createElement('div');
   const more = document.createElement('a');  
+  li.append(divBottom);
   more.setAttribute('aria-label', `View restaurant details of ${restaurant.name}`);
   more.innerHTML = 'View Details';  
   more.href = IDBRestaurant.urlForRestaurant(restaurant);
   more.alt = 'View Details';
-  li.append(more);
+  divBottom.append(more);
 
   return li;
 }

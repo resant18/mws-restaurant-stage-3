@@ -218,6 +218,9 @@ nav {
     min-height: 380px;  
     text-align: left;  
     padding: 15px 15px 0 15px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .restaurant-img {
       background-color: #ccc;
       display: block;  
@@ -267,7 +270,7 @@ nav {
       background-color: $data-link-color;
       border-radius: 6px;
       color: #000;
-      display: inline-block;
+      display: block;
       font-size: 1.1em;
       margin: 15px 0 15px 0;
       min-width: 48px;
