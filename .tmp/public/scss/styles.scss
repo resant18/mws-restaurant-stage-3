@@ -423,8 +423,7 @@ nav {
 }
 #submit_review {
   width: 160px;
-  float: right;
-  margin-bottom: 30px;
+  float: right;  
 }  
 #label_review_username {
   display: block;
@@ -466,6 +465,7 @@ nav {
   background-color: #f2f2f2;
   border-radius: 5px;
   padding: 20px;
+  margin-bottom: 30px;
 }
 input[type=text], select, textarea {
   background-color: white;
