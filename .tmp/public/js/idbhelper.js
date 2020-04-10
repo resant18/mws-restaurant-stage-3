@@ -1,9 +1,9 @@
 const IDB_NAME = 'mwsrestaurants';
 const IDB_VERSION = 2;
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVzYW50IiwiYSI6ImNqaW5oNXpwMjA5ZnQzd3BiMmtrNWFueHYifQ.SA7IDB7hI_d6bT5RtGeQfg';
-const SERVER_URL = location.protocol + "//" + location.hostname + ":1337";
+// const SERVER_URL = location.protocol + "//" + location.hostname + ":1337";
 // const SERVER_URL = 'http://localhost:1337';
-// const SERVER_URL = 'https://restaurant-review-pwa.herokuapp.com';
+const SERVER_URL = 'https://restaurant-review-pwa.herokuapp.com';
 
 
 
