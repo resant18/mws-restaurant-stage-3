@@ -210,7 +210,8 @@ nav h1 a {
   position: absolute;
   right: -10px;
   top: 5px;
-  z-index: 2; }
+  z-index: 2; 
+  outline: 0; }
 
 #restaurants-list li .favorite-button .icon-heart-favorited {
   fill: red; }
