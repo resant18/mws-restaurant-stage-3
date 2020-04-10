@@ -1,25 +1,58 @@
 {
-  "name": "Restaurant-Reviews",
-  "private": true,
-  "version": "0.0.0",
-  "description": "a Sails application",
-  "keywords": [],
+  "name": "mws-restaurant-stage-3",
+  "version": "3.0.0",
+  "description": "Udacity Google Mobile Web Specialist's Progressive Web Restaurant App Project",
+  "main": "index.html",
   "dependencies": {
+    "concurrently": "^5.1.0",
+    "eslint": "^4.19.1",
+    "express": "^4.17.1",
     "include-all": "^1.0.0",
     "rc": "1.0.1",
     "sails": "^0.12.13",
     "sails-disk": "~0.10.9"
   },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "browser-sync": "^2.24.4",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp": "3.9.1",
+    "gulp-eslint": "^4.0.2",
+    "gulp-image-resize": "^0.13.0",
+    "gulp-rename": "^1.2.3",
+    "pump": "^3.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-responsive-images": "0.0.3",
+    "gulp-sass": "^4.0.1",
+    "gulp-uglify-es": "^1.0.4",
+    "gulp-webp": "^3.0.0"
+  },
+  "engines": {
+    "node": "9.7.1"
+  },
   "scripts": {
     "debug": "node debug app.js",
     "start": "node app.js"
   },
-  "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/brandy/Restaurant-Reviews.git"
+    "url": "git+https://github.com/resant18/mws-restaurant-stage-3.git"
   },
-  "author": "Brandy Lee Camacho",
-  "linkedIn": "https://www.linkedin.com/in/brandycamacho/",
-  "email": "brandy@udacity.com"
+  "keywords": [
+    "mws",
+    "mobile",
+    "web",
+    "specialist",
+    "restaurant",
+    "review",
+    "udacity"
+  ],
+  "author": "Udacity & Renata Santoso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/resant18/mws-restaurant-stage-3/issues"
+  },
+  "homepage": "https://github.com/resant18/mws-restaurant-stage-3#readme"
 }
