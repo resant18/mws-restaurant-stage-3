@@ -5,7 +5,7 @@ function registerServiceWorker() {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js', {scope: '/'}).then((registration) => {  
         // registration worked      
-        // console.log('Service worker registration succeeded. Scope is ' + registration.scope);              
+        console.log('Service worker registration succeeded. Scope is ' + registration.scope);              
 
         // If there’s no controller that means this page didn’t load using service worker, 
         // but load the content from the network taking the latest version. In that case, exit early.
