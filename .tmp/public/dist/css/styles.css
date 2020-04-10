@@ -220,6 +220,11 @@ nav h1 a {
 #restaurants-list li .favorite-button .icon-heart-favorited {
   fill: red; }
 
+#restaurants-list li .favorite-button:not(.icon-heart-favorited):focus, 
+#restaurants-list li .favorite-button:not(.icon-heart-favorited):hover {
+  outline: 0;
+  fill: rgba(238, 0, 9, 0.80); }
+
 #restaurants-list li .favorite-button:not(.icon-heart-favorited) {
   fill: rgba(255, 255, 255, 0.9); }
 
