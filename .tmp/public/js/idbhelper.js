@@ -5,7 +5,7 @@ const SERVER_URL =
    location.hostname === "localhost"
       ? location.protocol + "//" + location.hostname + ":1337"
       : location.protocol + "//" + location.hostname;
-console.log(SERVER_URL);
+// console.log(SERVER_URL);
 
 
 
