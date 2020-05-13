@@ -2,12 +2,6 @@
 
 This is a case study project as part of Udacity Mobile Web Specialist Nanodegree which consist of three stages. The given initial code is gradually revised to achieve accesibility standard, more responsive. Moreover, offline first approach as a key characteristic of modern Progressive Web Application is also applied. 
 
-<div align="center">
-    <img width=70% src="./restaurant.jpg">    
-</div>
-
-<br>
-
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -32,7 +26,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 #### ~~How to Install and Run Python Server~~
 
-As further learning, the project is deployed in Heroku. Sail Server functions as Web Server to serve the static files and as a Application Server to send JSON data back to client.
+As further learning, the project is deployed in Heroku. Sail Server functions as Web Server to serve the static files and as a Application Server to send JSON data back to client. Check out the How to Run Sail Server as Web Server section.
 
 ~~1. If Python is not installed, navigate to Python's [website](https://www.python.org/) to download and install the software.~~
 
@@ -72,6 +66,12 @@ More information on: [How to install Sass on Mac](https://www.dyclassroom.com/ho
 There are three aspect are considered based on [Udacity Rubric Specification](https://review.udacity.com/#!/rubrics/1090/view)
 
 #### Responsive Design
+
+<div align="center">
+    <img width=70% src="./restaurant.jpg">    
+</div>
+
+<br>
 
 ##### Layout Design Pattern
 I use CSS Grid to handle the whole presentation of front end layout. It is easier to use CSS Grid compared to CSS Flexbox, since it is able to configure main content much easier in 2 dimensional ways, row and column. In index.html, CSS Grid is applied to main content to create auto-sizing restaurant list in columns. As mentioned in [CSS Tricks](https://css-tricks.com/auto-sizing-columns-css-grid-auto-fill-vs-auto-fit/) "More specifically, our ability to specify how many columns we want in the grid and then letting the browser handle the responsiveness of those columns for us, showing fewer columns on smaller viewport sizes, and more columns as the screen estate allows for more, without needing to write a single media query to dictate this responsive behavior". In restaurant.html, CSS Grid is applied in main content to change 2 columns for wider viewport to 1 column for narrow viewport as well change the order display.
