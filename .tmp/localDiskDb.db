@@ -1,7 +1,5 @@
 {
-  "data": {
-    "google": [],
-    "restaurant": [],
+  "data": {    
     "restaurants": [
       {
         "name": "Mission Chinese Food",
