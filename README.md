@@ -3,7 +3,7 @@
 This is a case study project as part of Udacity Mobile Web Specialist Nanodegree which consist of three stages. The given initial code is gradually revised to achieve accesibility standard, more responsive. Moreover, offline first approach as a key characteristic of modern Progressive Web Application is also applied. 
 
 <div align="center">
-    <img width=70% src="./restaurant.png">    
+    <img width=70% src="./restaurant.jpg">    
 </div>
 
 <br>
@@ -32,13 +32,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 #### ~~How to Install and Run Python Server~~
 
+As further learning, the project is deployed in Heroku. Sail Server functions as Web Server to serve the static files and as a Application Server to send JSON data back to client.
+
 ~~1. If Python is not installed, navigate to Python's [website](https://www.python.org/) to download and install the software.~~
 
 ~~2. In a terminal, check the version of Python you have: `python -V`. If you have Python 2.x, spin up the server with `python -m SimpleHTTPServer 8000` (or some other port, if port 8000 is already in use.) For Python 3.x, you can use `python3 -m http.server 8000`.~~ 
 
 ~~3. With your server running, visit the site: `http://localhost:8000`~~
 
-#### How to Run Server
+#### How to Run Sail Server as Web Server
 It used Sail Server to serve JSON data from back end and serve static files (HTML, JavaScript files and other asset files) as front end.
 
 Run the server using command:
