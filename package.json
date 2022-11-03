@@ -9,7 +9,7 @@
     "express": "^4.17.1",
     "include-all": "^1.0.0",
     "rc": "1.0.1",
-    "sails": "^0.12.13",
+    "sails": "^1.5.3",
     "sails-disk": "~0.10.9"
   },
   "devDependencies": {
@@ -17,14 +17,14 @@
     "babel-preset-env": "^1.7.0",
     "browser-sync": "^2.24.4",
     "gulp-autoprefixer": "^5.0.0",
-    "gulp": "3.9.1",
+    "gulp": "4.0.2",
     "gulp-eslint": "^4.0.2",
     "gulp-image-resize": "^0.13.0",
     "gulp-rename": "^1.2.3",
     "pump": "^3.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-imagemin": "^4.1.0",
-    "gulp-responsive-images": "0.0.3",
+    "gulp-responsive-images": "0.0.4",
     "gulp-sass": "^4.0.1",
     "gulp-uglify-es": "^1.0.4",
     "gulp-webp": "^3.0.0"
